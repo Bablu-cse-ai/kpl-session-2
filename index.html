@@ -630,166 +630,263 @@
         // Multiple Admin Google Sheets Live Score Synchronization
         const sheetCsvUrl = "YOUR_GOOGLE_SHEET_CSV_LINK_HERE";
 
-    
-    // अपने 4 पब्लिश किए हुए CSV लिंक यहाँ डालें
+// मल्टीपल एडमिन गूगल शीट्स लिंक्स
     const liveLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQJ4-tJtoJW_Wq0q6z5icTbLwS-P2FVCYz2CZF9szK7TyWGSxId3VTGFb9EuKhO6bjRIvUjbZVh6qTp/pub?gid=0&single=true&output=csv";
     const pointsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS8Dyo1jcXL1sXfFoQZV5DLsQBs7lr6WvGlYa2Sbi0a8uZhbBj10kNtaJe_95x7a3EKettBQMyzjXxI/pub?gid=0&single=true&output=csv";
     const squadsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSv46xMBH9vqs9EgMemrhemOgEZOd76IeROPkd2GkU7Z3QY28tigHOlm21MbeR-n53UlAPF0taeEG-B/pub?gid=0&single=true&output=csv";
-    const statsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRwOyTtMOfrEKoyTsIQdcgZba9p1gPRHRSR9I9azbgzNtprhnzaVyeNlwejrC0O-xABWS1avb0xweQd/pub?gid=0&single=true&output=csv"; // अपनी नई पब्लिश की हुई Stats शीट का लिंक यहाँ डालें
+    const statsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRwOyTtMOfrEKoyTsIQdcgZba9p1gPRHRSR9I9azbgzNtprhnzaVyeNlwejrC0O-xABWS1avb0xweQd/pub?gid=0&single=true&output=csv";
 
-
+    // 1. Live Score अपडेट फंक्शन
     async function updateKPL() {
-    // 1. Live Score अपडेट
-    try {
-        const response = await fetch(liveLink);
-        if (!response.ok) throw new Error('Live Data Network error');
-        const data = await response.text();
-        const row = data.split('\n')[1].split(',');
-        document.getElementById('teamA-display').innerText = row[0];
-        document.getElementById('teamB-display').innerText = row[1];
-        document.getElementById('score-display').innerText = row[2];
-        document.getElementById('overs-display').innerText = `(${row[3]} OV)`;
-        document.getElementById('status-display').innerText = row[4];
-    } catch (error) {
-        console.error("Live Score Update Failed:", error);
+        try {
+            const response = await fetch(liveLink);
+            const data = await response.text();
+            const row = data.split('\n')[1].split(',');
+            document.getElementById('teamA-display').innerText = row[0];
+            document.getElementById('teamB-display').innerText = row[1];
+            document.getElementById('score-display').innerText = row[2];
+            document.getElementById('overs-display').innerText = `(${row[3]} OV)`;
+            document.getElementById('status-display').innerText = row[4];
+        } catch (e) { console.error("Live Score Update Failed:", e); }
+
+        // Points Table अपडेट
+        try {
+            const resTable = await fetch(pointsLink);
+            const dataTable = await resTable.text();
+            const rows = dataTable.split('\n');
+            let html = "";
+            for(let i=1; i<rows.length; i++) {
+                const c = rows[i].split(',');
+                if(c.length < 6) continue;
+                html += `<tr class="hover:bg-slate-900/30">
+                    <td class="p-4 text-center font-bold text-amber-500">${c[0]}</td>
+                    <td class="p-4 font-black text-white">${c[1]}</td>
+                    <td class="p-4 text-center font-mono">${c[2]}</td>
+                    <td class="p-4 text-center font-mono text-emerald-400">${c[3]}</td>
+                    <td class="p-4 text-center font-mono text-red-400">${c[4]}</td>
+                    <td class="p-4 text-center font-black text-amber-400">${c[5]}</td>
+                </tr>`;
+            }
+            document.getElementById('points-table-body').innerHTML = html;
+        } catch (e) { console.error("Points Table Update Failed:", e); }
     }
 
-    // 2. Points Table अपडेट
-    try {
-        const resTable = await fetch(pointsLink);
-        const dataTable = await resTable.text();
-        const rows = dataTable.split('\n');
-        let html = "";
-        for(let i=1; i<rows.length; i++) {
-            const c = rows[i].split(',');
-            if(c.length < 6) continue;
-            html += `<tr class="hover:bg-slate-900/30">
-                <td class="p-4 text-center font-bold text-amber-500">${c[0]}</td>
-                <td class="p-4 font-black text-white">${c[1]}</td>
-                <td class="p-4 text-center font-mono">${c[2]}</td>
-                <td class="p-4 text-center font-mono text-emerald-400">${c[3]}</td>
-                <td class="p-4 text-center font-mono text-red-400">${c[4]}</td>
-                <td class="p-4 text-center font-black text-amber-400">${c[5]}</td>
-            </tr>`;
-        }
-        document.getElementById('points-table-body').innerHTML = html;
-    } catch (error) {
-        console.error("Points Table Update Failed:", error);
+    // 2. Player Stats अपडेट फंक्शन
+    async function updatePlayerStats() {
+        try {
+            const response = await fetch(statsLink);
+            const data = await response.text();
+            const rows = data.split('\n');
+            let html = "";
+            for(let i = 1; i < rows.length; i++) {
+                const c = rows[i].split(',').map(item => item.trim());
+                if(c.length < 5) continue;
+                let avg = (c[3] > 0) ? (c[2] / c[3]).toFixed(1) : "0"; 
+                let sr = (c[4] > 0) ? ((c[2] / c[4]) * 100).toFixed(0) : "0";
+                html += `<tr class="border-b border-slate-900 hover:bg-slate-900/50">
+                    <td class="p-4 font-bold text-white">${c[0]}</td>
+                    <td class="p-4">${c[2]}</td>
+                    <td class="p-4">${c[4]}</td>
+                    <td class="p-4 font-mono text-emerald-400">${avg}</td>
+                    <td class="p-4 font-mono text-amber-400">${sr}</td>
+                </tr>`;
+            }
+            document.getElementById('stats-table-body').innerHTML = html;
+        } catch (e) { console.error("Stats Load Failed:", e); }
     }
 
-// player sats अपनी नई पब्लिश की हुई Stats शीट का लिंक यहाँ डालें
-async function updatePlayerStats() {
-    try {
-        const response = await fetch(statsLink);
-        const data = await response.text();
-        const rows = data.split('\n');
-        let html = "";
+    // 3. Squads अपडेट फंक्शन
+    async function updateSquads() {
+        try {
+            const resSquad = await fetch(squadsLink);
+            const dataSquad = await resSquad.text();
+            const rows = dataSquad.trim().split(/\r?\n/);
+            let teams = {};
+            for(let i = 1; i < rows.length; i++) {
+                const c = rows[i].split(',').map(item => item.trim());
+                if(c.length >= 2 && c[0] !== "") {
+                    if(!teams[c[0]]) teams[c[0]] = [];
+                    teams[c[0]].push(c[1]);
+                }
+            }
+            let html = "";
+            for(let teamName in teams) {
+                html += `<div class="glass-panel p-6 rounded-3xl border border-slate-800"><h3 class="sports-font text-xl font-black text-amber-400 mb-4">${teamName}</h3><div class="grid grid-cols-2 gap-2 text-xs text-slate-300">`;
+                teams[teamName].forEach(p => html += `<div class="p-2.5 bg-slate-950/50 rounded-xl">${p}</div>`);
+                html += `</div></div>`;
+            }
+            document.getElementById('teams-container').innerHTML = html;
+        } catch (e) { console.error("Squads Update Failed:", e); }
+    }
 
-        // i=1 ताकि हेडर वाली पहली लाइन को छोड़ दें
-        for(let i = 1; i < rows.length; i++) {
-            const c = rows[i].split(',').map(item => item.trim());
-            if(c.length < 5) continue; // अगर कॉलम कम हैं तो छोड़ दें
+    // पेज लोड पर कॉल करना
+    document.addEventListener("DOMContentLoaded", () => {
+        updateKPL();
+        updatePlayerStats();
+        updateSquads();
+        setInterval(updateKPL, 5000); 
+        setInterval(updatePlayerStats, 5000);
+    });
+        
+    // अपने 4 पब्लिश किए हुए CSV लिंक यहाँ डालें
+//     const liveLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQJ4-tJtoJW_Wq0q6z5icTbLwS-P2FVCYz2CZF9szK7TyWGSxId3VTGFb9EuKhO6bjRIvUjbZVh6qTp/pub?gid=0&single=true&output=csv";
+//     const pointsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS8Dyo1jcXL1sXfFoQZV5DLsQBs7lr6WvGlYa2Sbi0a8uZhbBj10kNtaJe_95x7a3EKettBQMyzjXxI/pub?gid=0&single=true&output=csv";
+//     const squadsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSv46xMBH9vqs9EgMemrhemOgEZOd76IeROPkd2GkU7Z3QY28tigHOlm21MbeR-n53UlAPF0taeEG-B/pub?gid=0&single=true&output=csv";
+//     const statsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRwOyTtMOfrEKoyTsIQdcgZba9p1gPRHRSR9I9azbgzNtprhnzaVyeNlwejrC0O-xABWS1avb0xweQd/pub?gid=0&single=true&output=csv"; // अपनी नई पब्लिश की हुई Stats शीट का लिंक यहाँ डालें
+
+
+//     async function updateKPL() {
+//     // 1. Live Score अपडेट
+//     try {
+//         const response = await fetch(liveLink);
+//         if (!response.ok) throw new Error('Live Data Network error');
+//         const data = await response.text();
+//         const row = data.split('\n')[1].split(',');
+//         document.getElementById('teamA-display').innerText = row[0];
+//         document.getElementById('teamB-display').innerText = row[1];
+//         document.getElementById('score-display').innerText = row[2];
+//         document.getElementById('overs-display').innerText = `(${row[3]} OV)`;
+//         document.getElementById('status-display').innerText = row[4];
+//     } catch (error) {
+//         console.error("Live Score Update Failed:", error);
+//     }
+
+//     // 2. Points Table अपडेट
+//     try {
+//         const resTable = await fetch(pointsLink);
+//         const dataTable = await resTable.text();
+//         const rows = dataTable.split('\n');
+//         let html = "";
+//         for(let i=1; i<rows.length; i++) {
+//             const c = rows[i].split(',');
+//             if(c.length < 6) continue;
+//             html += `<tr class="hover:bg-slate-900/30">
+//                 <td class="p-4 text-center font-bold text-amber-500">${c[0]}</td>
+//                 <td class="p-4 font-black text-white">${c[1]}</td>
+//                 <td class="p-4 text-center font-mono">${c[2]}</td>
+//                 <td class="p-4 text-center font-mono text-emerald-400">${c[3]}</td>
+//                 <td class="p-4 text-center font-mono text-red-400">${c[4]}</td>
+//                 <td class="p-4 text-center font-black text-amber-400">${c[5]}</td>
+//             </tr>`;
+//         }
+//         document.getElementById('points-table-body').innerHTML = html;
+//     } catch (error) {
+//         console.error("Points Table Update Failed:", error);
+//     }
+
+// // player sats अपनी नई पब्लिश की हुई Stats शीट का लिंक यहाँ डालें
+// async function updatePlayerStats() {
+//     try {
+//         const response = await fetch(statsLink);
+//         const data = await response.text();
+//         const rows = data.split('\n');
+//         let html = "";
+
+//         // i=1 ताकि हेडर वाली पहली लाइन को छोड़ दें
+//         for(let i = 1; i < rows.length; i++) {
+//             const c = rows[i].split(',').map(item => item.trim());
+//             if(c.length < 5) continue; // अगर कॉलम कम हैं तो छोड़ दें
             
-            // गणित (Auto-calculation)
-            let avg = (c[3] > 0) ? (c[2] / c[3]).toFixed(1) : "0"; 
-            let sr = (c[4] > 0) ? ((c[2] / c[4]) * 100).toFixed(0) : "0";
+//             // गणित (Auto-calculation)
+//             let avg = (c[3] > 0) ? (c[2] / c[3]).toFixed(1) : "0"; 
+//             let sr = (c[4] > 0) ? ((c[2] / c[4]) * 100).toFixed(0) : "0";
 
-            html += `<tr class="border-b border-slate-900 hover:bg-slate-900/50">
-                <td class="p-4 font-bold text-white">${c[0]}</td>
-                <td class="p-4">${c[2]}</td>
-                <td class="p-4">${c[4]}</td>
-                <td class="p-4 font-mono text-emerald-400">${avg}</td>
-                <td class="p-4 font-mono text-amber-400">${sr}</td>
-            </tr>`;
-        }
-        document.getElementById('stats-table-body').innerHTML = html;
-    } catch (e) { console.error("Stats Load Failed"); }
-}
-// --- Stats कोड खत्म ---
+//             html += `<tr class="border-b border-slate-900 hover:bg-slate-900/50">
+//                 <td class="p-4 font-bold text-white">${c[0]}</td>
+//                 <td class="p-4">${c[2]}</td>
+//                 <td class="p-4">${c[4]}</td>
+//                 <td class="p-4 font-mono text-emerald-400">${avg}</td>
+//                 <td class="p-4 font-mono text-amber-400">${sr}</td>
+//             </tr>`;
+//         }
+//         document.getElementById('stats-table-body').innerHTML = html;
+//     } catch (e) { console.error("Stats Load Failed"); }
+// }
+// // --- Stats कोड खत्म ---
         
-    // 3. Squads अपडेट
-    // try {
-    //     const resSquad = await fetch(squadsLink);
-    //     const dataSquad = await resSquad.text();
-    //     const rows = dataSquad.split('\n');
-    //     let teams = {};
+//     // 3. Squads अपडेट
+//     // try {
+//     //     const resSquad = await fetch(squadsLink);
+//     //     const dataSquad = await resSquad.text();
+//     //     const rows = dataSquad.split('\n');
+//     //     let teams = {};
         
-    //     for(let i=1; i<rows.length; i++) {
-    //         const c = rows[i].split(',');
-    //         if(c.length < 2) continue;
-    //         if(!teams[c[0]]) teams[c[0]] = [];
-    //         teams[c[0]].push(c[1]);
-    //     }
+//     //     for(let i=1; i<rows.length; i++) {
+//     //         const c = rows[i].split(',');
+//     //         if(c.length < 2) continue;
+//     //         if(!teams[c[0]]) teams[c[0]] = [];
+//     //         teams[c[0]].push(c[1]);
+//     //     }
 
-    //     let html = "";
-    //     for(let teamName in teams) {
-    //         html += `<div class="glass-panel p-6 rounded-3xl border border-slate-800">
-    //                     <h3 class="sports-font text-xl font-black text-amber-400 mb-4">${teamName}</h3>
-    //                     <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">`;
-    //         teams[teamName].forEach(player => {
-    //             html += `<div class="p-2.5 bg-slate-950/50 rounded-xl">${player}</div>`;
-    //         });
-    //         html += `</div></div>`;
-    //     }
-    //     document.getElementById('teams-container').innerHTML = html;
-    // } catch (error) {
-    //     console.error("Squads Update Failed:", error);
-    // }
+//     //     let html = "";
+//     //     for(let teamName in teams) {
+//     //         html += `<div class="glass-panel p-6 rounded-3xl border border-slate-800">
+//     //                     <h3 class="sports-font text-xl font-black text-amber-400 mb-4">${teamName}</h3>
+//     //                     <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">`;
+//     //         teams[teamName].forEach(player => {
+//     //             html += `<div class="p-2.5 bg-slate-950/50 rounded-xl">${player}</div>`;
+//     //         });
+//     //         html += `</div></div>`;
+//     //     }
+//     //     document.getElementById('teams-container').innerHTML = html;
+//     // } catch (error) {
+//     //     console.error("Squads Update Failed:", error);
+//     // }
 
-        // 3. Squads अपडेट
-try {
-    const resSquad = await fetch(squadsLink);
-    const dataSquad = await resSquad.text();
-    // लाइन दर लाइन डेटा अलग करें और खाली लाइनों को हटाएं
-    const rows = dataSquad.trim().split(/\r?\n/);
-    let teams = {};
+//         // 3. Squads अपडेट
+// try {
+//     const resSquad = await fetch(squadsLink);
+//     const dataSquad = await resSquad.text();
+//     // लाइन दर लाइन डेटा अलग करें और खाली लाइनों को हटाएं
+//     const rows = dataSquad.trim().split(/\r?\n/);
+//     let teams = {};
     
-    // i=1 से शुरू करें (ताकि हेडर वाली लाइन छूट जाए)
-    for(let i = 1; i < rows.length; i++) {
-        // डेटा को कॉमा से तोड़ें (अगर डेटा में कॉमा है, तो भी यह सुरक्षित है)
-        const c = rows[i].split(',').map(item => item.trim());
+//     // i=1 से शुरू करें (ताकि हेडर वाली लाइन छूट जाए)
+//     for(let i = 1; i < rows.length; i++) {
+//         // डेटा को कॉमा से तोड़ें (अगर डेटा में कॉमा है, तो भी यह सुरक्षित है)
+//         const c = rows[i].split(',').map(item => item.trim());
         
-        // सुनिश्चित करें कि टीम का नाम और खिलाड़ी का नाम खाली न हो
-        if(c.length >= 2 && c[0] !== "" && c[1] !== "") {
-            if(!teams[c[0]]) teams[c[0]] = [];
-            teams[c[0]].push(c[1]);
-        }
-    }
+//         // सुनिश्चित करें कि टीम का नाम और खिलाड़ी का नाम खाली न हो
+//         if(c.length >= 2 && c[0] !== "" && c[1] !== "") {
+//             if(!teams[c[0]]) teams[c[0]] = [];
+//             teams[c[0]].push(c[1]);
+//         }
+//     }
 
-    let html = "";
-    for(let teamName in teams) {
-        html += `
-        <div class="glass-panel p-6 rounded-3xl border border-slate-800">
-            <h3 class="sports-font text-xl font-black text-amber-400 mb-4 flex justify-between items-center">
-                ${teamName} 
-                <span class="text-[10px] bg-slate-900 px-2 py-1 rounded text-slate-400">Squad</span>
-            </h3>
-            <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">`;
+//     let html = "";
+//     for(let teamName in teams) {
+//         html += `
+//         <div class="glass-panel p-6 rounded-3xl border border-slate-800">
+//             <h3 class="sports-font text-xl font-black text-amber-400 mb-4 flex justify-between items-center">
+//                 ${teamName} 
+//                 <span class="text-[10px] bg-slate-900 px-2 py-1 rounded text-slate-400">Squad</span>
+//             </h3>
+//             <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">`;
         
-        teams[teamName].forEach(player => {
-            html += `<div class="p-2.5 bg-slate-950/50 rounded-xl border border-slate-900/50">${player}</div>`;
-        });
+//         teams[teamName].forEach(player => {
+//             html += `<div class="p-2.5 bg-slate-950/50 rounded-xl border border-slate-900/50">${player}</div>`;
+//         });
         
-        html += `</div></div>`;
-    }
+//         html += `</div></div>`;
+//     }
     
-    const container = document.getElementById('teams-container');
-    if(container) {
-        container.innerHTML = html;
-    }
-} catch (error) {
-    console.error("Squads Update Failed:", error);
-}
+//     const container = document.getElementById('teams-container');
+//     if(container) {
+//         container.innerHTML = html;
+//     }
+// } catch (error) {
+//     console.error("Squads Update Failed:", error);
+// }
         
-}
-        // Add this at the end of your script
-document.addEventListener("DOMContentLoaded", () => {
-    // ... aapka existing code ...
-    updateKPL(); // Ye function call karna zaroori hai
-    updatePlayerStats();
-    setInterval(updateKPL, 2000); 
-    setInterval(updatePlayerStats, 2000); 
-});
+// }
+//         // Add this at the end of your script
+// document.addEventListener("DOMContentLoaded", () => {
+//     // ... aapka existing code ...
+//     updateKPL(); // Ye function call karna zaroori hai
+//     updatePlayerStats();
+//     setInterval(updateKPL, 2000); 
+//     setInterval(updatePlayerStats, 2000); 
+// });
 
     </script>
 </body>
