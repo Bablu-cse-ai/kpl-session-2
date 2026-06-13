@@ -79,8 +79,11 @@
     </header>
 
     <nav class="max-w-5xl mx-auto px-4 mb-6">
-        <div class="bg-slate-950/90 p-2 rounded-2xl border border-slate-900 grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs md:text-sm font-bold sports-font">
+        <div class="bg-slate-950/90 p-2 rounded-2xl border border-slate-900 grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs md:text-sm font-bold sports-font">
             <button onclick="switchTab('live')" id="tab-live" class="py-3 px-2 rounded-xl transition cursor-pointer bg-red-600 text-white shadow-lg"><i class="fa-solid fa-satellite-dish mr-1 live-dot"></i> MATCH CENTER</button>
+            <button onclick="switchTab('stats')" id="tab-stats" class="py-3 px-2 rounded-xl transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900">
+    <i class="fa-solid fa-chart-line mr-1"></i> PLAYER STATS
+</button>
             <button onclick="switchTab('table')" id="tab-table" class="py-3 px-2 rounded-xl transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900"><i class="fa-solid fa-table-list mr-1"></i> POINTS TABLE</button>
             <button onclick="switchTab('rules')" id="tab-rules" class="py-3 px-2 rounded-xl transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900"><i class="fa-solid fa-gavel mr-1"></i> FULL RULES</button>
             <button onclick="switchTab('teams')" id="tab-teams" class="py-3 px-2 rounded-xl transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900"><i class="fa-solid fa-users mr-1"></i> SQUADS & CAPS</button>
@@ -496,6 +499,25 @@
             </div>
         </div>
 
+ <div id="content-stats" class="tab-content hidden max-w-5xl mx-auto space-y-6">
+    <section class="glass-panel p-6 rounded-3xl border border-slate-800">
+        <h2 class="sports-font text-2xl font-black text-amber-400 mb-6 uppercase">🏆 Player Performance</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-slate-300">
+                <thead>
+                    <tr class="text-amber-500 text-xs uppercase border-b border-slate-800">
+                        <th class="p-4">Player</th>
+                        <th class="p-4">Runs</th>
+                        <th class="p-4">Balls</th>
+                        <th class="p-4">Avg</th>
+                        <th class="p-4">SR</th>
+                    </tr>
+                </thead>
+                <tbody id="stats-table-body" class="text-sm"></tbody>
+            </table>
+        </div>
+    </section>
+</div>
     </main>
 
     <section class="max-w-7xl mx-auto px-4 py-8 border-t border-slate-900/60 mt-12">
@@ -609,10 +631,12 @@
         const sheetCsvUrl = "YOUR_GOOGLE_SHEET_CSV_LINK_HERE";
 
     
-    // अपने 3 पब्लिश किए हुए CSV लिंक यहाँ डालें
+    // अपने 4 पब्लिश किए हुए CSV लिंक यहाँ डालें
     const liveLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQJ4-tJtoJW_Wq0q6z5icTbLwS-P2FVCYz2CZF9szK7TyWGSxId3VTGFb9EuKhO6bjRIvUjbZVh6qTp/pub?gid=0&single=true&output=csv";
     const pointsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS8Dyo1jcXL1sXfFoQZV5DLsQBs7lr6WvGlYa2Sbi0a8uZhbBj10kNtaJe_95x7a3EKettBQMyzjXxI/pub?gid=0&single=true&output=csv";
     const squadsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSv46xMBH9vqs9EgMemrhemOgEZOd76IeROPkd2GkU7Z3QY28tigHOlm21MbeR-n53UlAPF0taeEG-B/pub?gid=0&single=true&output=csv";
+    const statsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRwOyTtMOfrEKoyTsIQdcgZba9p1gPRHRSR9I9azbgzNtprhnzaVyeNlwejrC0O-xABWS1avb0xweQd/pub?gid=0&single=true&output=csv"; // अपनी नई पब्लिश की हुई Stats शीट का लिंक यहाँ डालें
+
 
     async function updateKPL() {
     // 1. Live Score अपडेट
@@ -629,7 +653,36 @@
     } catch (error) {
         console.error("Live Score Update Failed:", error);
     }
+// player sats अपनी नई पब्लिश की हुई Stats शीट का लिंक यहाँ डालें
+async function updatePlayerStats() {
+    try {
+        const response = await fetch(statsLink);
+        const data = await response.text();
+        const rows = data.split('\n');
+        let html = "";
 
+        // i=1 ताकि हेडर वाली पहली लाइन को छोड़ दें
+        for(let i = 1; i < rows.length; i++) {
+            const c = rows[i].split(',').map(item => item.trim());
+            if(c.length < 5) continue; // अगर कॉलम कम हैं तो छोड़ दें
+            
+            // गणित (Auto-calculation)
+            let avg = (c[3] > 0) ? (c[2] / c[3]).toFixed(1) : "0"; 
+            let sr = (c[4] > 0) ? ((c[2] / c[4]) * 100).toFixed(0) : "0";
+
+            html += `<tr class="border-b border-slate-900 hover:bg-slate-900/50">
+                <td class="p-4 font-bold text-white">${c[0]}</td>
+                <td class="p-4">${c[2]}</td>
+                <td class="p-4">${c[4]}</td>
+                <td class="p-4 font-mono text-emerald-400">${avg}</td>
+                <td class="p-4 font-mono text-amber-400">${sr}</td>
+            </tr>`;
+        }
+        document.getElementById('stats-table-body').innerHTML = html;
+    } catch (e) { console.error("Stats Load Failed"); }
+}
+// --- Stats कोड खत्म ---
+        
     // 2. Points Table अपडेट
     try {
         const resTable = await fetch(pointsLink);
@@ -732,7 +785,9 @@ try {
 document.addEventListener("DOMContentLoaded", () => {
     // ... aapka existing code ...
     updateKPL(); // Ye function call karna zaroori hai
+    updatePlayerStats();
     setInterval(updateKPL, 2000); 
+    setInterval(updatePlayerStats, 2000); 
 });
 
     </script>
