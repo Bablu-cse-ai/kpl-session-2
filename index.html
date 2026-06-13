@@ -653,6 +653,30 @@
     } catch (error) {
         console.error("Live Score Update Failed:", error);
     }
+
+    // 2. Points Table अपडेट
+    try {
+        const resTable = await fetch(pointsLink);
+        const dataTable = await resTable.text();
+        const rows = dataTable.split('\n');
+        let html = "";
+        for(let i=1; i<rows.length; i++) {
+            const c = rows[i].split(',');
+            if(c.length < 6) continue;
+            html += `<tr class="hover:bg-slate-900/30">
+                <td class="p-4 text-center font-bold text-amber-500">${c[0]}</td>
+                <td class="p-4 font-black text-white">${c[1]}</td>
+                <td class="p-4 text-center font-mono">${c[2]}</td>
+                <td class="p-4 text-center font-mono text-emerald-400">${c[3]}</td>
+                <td class="p-4 text-center font-mono text-red-400">${c[4]}</td>
+                <td class="p-4 text-center font-black text-amber-400">${c[5]}</td>
+            </tr>`;
+        }
+        document.getElementById('points-table-body').innerHTML = html;
+    } catch (error) {
+        console.error("Points Table Update Failed:", error);
+    }
+
 // player sats अपनी नई पब्लिश की हुई Stats शीट का लिंक यहाँ डालें
 async function updatePlayerStats() {
     try {
@@ -683,29 +707,6 @@ async function updatePlayerStats() {
 }
 // --- Stats कोड खत्म ---
         
-    // 2. Points Table अपडेट
-    try {
-        const resTable = await fetch(pointsLink);
-        const dataTable = await resTable.text();
-        const rows = dataTable.split('\n');
-        let html = "";
-        for(let i=1; i<rows.length; i++) {
-            const c = rows[i].split(',');
-            if(c.length < 6) continue;
-            html += `<tr class="hover:bg-slate-900/30">
-                <td class="p-4 text-center font-bold text-amber-500">${c[0]}</td>
-                <td class="p-4 font-black text-white">${c[1]}</td>
-                <td class="p-4 text-center font-mono">${c[2]}</td>
-                <td class="p-4 text-center font-mono text-emerald-400">${c[3]}</td>
-                <td class="p-4 text-center font-mono text-red-400">${c[4]}</td>
-                <td class="p-4 text-center font-black text-amber-400">${c[5]}</td>
-            </tr>`;
-        }
-        document.getElementById('points-table-body').innerHTML = html;
-    } catch (error) {
-        console.error("Points Table Update Failed:", error);
-    }
-
     // 3. Squads अपडेट
     // try {
     //     const resSquad = await fetch(squadsLink);
