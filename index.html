@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kajibigha Premier League | Ultimate Pro Sports Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght=600;800&family=Space+Grotesk:wght=400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(to bottom, rgba(2, 6, 23, 0.94), rgba(2, 6, 23, 0.98)), 
+                        url('https://images.unsplash.com/photo-1531415074968-036ba1b575da?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        .sports-font {
+            font-family: 'Oxanium', sans-serif;
+        }
+        .neon-glow-amber {
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.25);
+        }
+        .neon-glow-red {
+            box-shadow: 0 0 35px rgba(239, 68, 68, 0.35);
+        }
+        .neon-glow-cyan {
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.25);
+        }
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(2, 6, 23, 0.95) 100%);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.08); }
+        }
+        .live-dot {
+            animation: pulse-soft 1.8s infinite;
+        }
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
+        }
+        .animate-ticker {
+            display: inline-block;
+            animation: ticker 30s linear infinite;
+        }
+        .score-glow {
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+        }
+    </style>
+</head>
+<body class="text-slate-100 antialiased selection:bg-amber-500 selection:text-slate-950 overflow-x-hidden">
+
+    <div class="bg-gradient-to-r from-red-600 via-amber-500 to-orange-600 text-slate-950 text-xs md:text-sm font-black py-2.5 overflow-hidden whitespace-nowrap tracking-widest sports-font sticky top-0 z-50 shadow-2xl uppercase">
+        <div class="animate-ticker inline-block pl-[100%]">
+            <span>⚡ KPL SEASON 2 • REGISTRATION OPEN • ENTRY FEE: ₹900 • GRAND MATCHES START: 13 JUNE • NO THROW BOWLERS ALLOWED • CONTACT ORGANIZERS FOR SLOTS ⚡ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⚡ KPL SEASON 2 • REGISTRATION OPEN • ENTRY FEE: ₹900 • GRAND MATCHES START: 13 JUNE • NO THROW BOWLERS ALLOWED • CONTACT ORGANIZERS FOR SLOTS ⚡</span>
+        </div>
+    </div>
+
+    <header class="relative pt-12 pb-6 px-4 text-center bg-gradient-to-b from-amber-600/10 via-transparent to-transparent">
+        <div class="max-w-5xl mx-auto space-y-4 relative z-10">
+            <div onclick="celebrateWin()" class="cursor-pointer inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/30 px-5 py-2 rounded-full text-amber-400 text-xs font-bold tracking-widest sports-font uppercase hover:bg-amber-500/20 transition shadow-lg">
+                <i class="fa-solid fa-trophy text-amber-500 animate-bounce"></i> OFFICIAL KPL TOURNAMENT PORTAL • CLICK TO CELEBRATE 🎉
+            </div>
+            
+            <h1 class="sports-font text-5xl sm:text-7xl lg:text-8xl font-black uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-200 to-amber-500 filter drop-shadow-[0_5px_5px_rgba(0,0,0,0.9)]">
+                KAJIBIGHA PREMIER LEAGUE
+            </h1>
+            <p class="text-base sm:text-xl font-bold text-slate-400 tracking-wide">सीजन - 02 | <span class="text-amber-400 font-extrabold">KPL S2 MAGNIFICENT ARENA</span></p>
+        </div>
+    </header>
+
+    <nav class="max-w-5xl mx-auto px-4 mb-6">
+        <div class="bg-slate-950/90 p-2 rounded-2xl border border-slate-900 grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs md:text-sm font-bold sports-font">
+            <button onclick="switchTab('live')" id="tab-live" class="py-3 px-2 rounded-xl transition cursor-pointer bg-red-600 text-white shadow-lg"><i class="fa-solid fa-satellite-dish mr-1 live-dot"></i> MATCH CENTER</button>
+            <button onclick="switchTab('table')" id="tab-table" class="py-3 px-2 rounded-xl transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900"><i class="fa-solid fa-table-list mr-1"></i> POINTS TABLE</button>
+            <button onclick="switchTab('rules')" id="tab-rules" class="py-3 px-2 rounded-xl transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900"><i class="fa-solid fa-gavel mr-1"></i> FULL RULES</button>
+            <button onclick="switchTab('teams')" id="tab-teams" class="py-3 px-2 rounded-xl transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900"><i class="fa-solid fa-users mr-1"></i> SQUADS & CAPS</button>
+            <button onclick="switchTab('fan')" id="tab-fan" class="py-3 px-2 rounded-xl transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> KPL TV & FAN ZONE</button>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-2 min-h-[500px]">
+
+        <div id="content-live" class="tab-content space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <section class="relative overflow-hidden rounded-3xl border-2 border-red-500/40 bg-gradient-to-br from-slate-950 via-slate-900 to-black p-6 md:p-8 shadow-2xl neon-glow-red">
+                        <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-red-500 to-transparent"></div>
+                        <div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] md:text-xs px-6 py-2 rounded-bl-2xl font-black uppercase tracking-widest sports-font flex items-center gap-2 shadow-md">
+                            <span class="w-2.5 h-2.5 rounded-full bg-white live-dot"></span> LIVE MATCH CENTER
+                        </div>
+                        
+                        <h3 class="sports-font text-xs font-black text-slate-500 uppercase tracking-widest mb-6">KPL PROFESSIONAL MATRIX DISPLAY</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-6 bg-slate-950/90 p-6 rounded-2xl border border-slate-800/60 relative">
+                            <div class="text-center md:text-left space-y-1">
+                                <span class="bg-amber-500/10 text-amber-400 font-bold text-[10px] px-2.5 py-0.5 rounded-md border border-amber-500/20 sports-font uppercase tracking-wider">TEAM 01</span>
+                                <p id="teamA-display" class="text-2xl font-black text-white tracking-wide uppercase drop-shadow">KAJIBIGHA XI</p>
+                                <p class="text-xs text-amber-500 font-medium flex items-center justify-center md:justify-start gap-1">
+                                    <i class="fa-solid fa-circle-nodes text-[9px]"></i> Opted to Bowl First 🥎
+                                </p>
+                            </div>
+                            
+                            <div class="bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800/80 px-4 py-5 rounded-2xl text-center shadow-2xl relative group transform hover:scale-105 transition-all duration-300">
+                                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-500/10 text-red-400 border border-red-500/30 font-black text-[9px] px-3 py-0.5 rounded-full uppercase tracking-widest sports-font">CURRENT SCORE</div>
+                                <p id="score-display" class="sports-font text-4xl md:text-5xl font-black text-red-500 tracking-tighter score-glow mt-1">...</p>
+                                <p id="overs-display" class="text-xs text-slate-400 mt-1 uppercase tracking-widest font-bold font-mono bg-slate-900/90 py-1 px-2 rounded-lg inline-block">.. OV</p>
+                            </div>
+                            
+                            <div class="text-center md:text-right space-y-1">
+                                <span class="bg-slate-800 text-slate-400 font-bold text-[10px] px-2.5 py-0.5 rounded-md border border-slate-700 sports-font uppercase tracking-wider">TEAM 02</span>
+                                <p id="teamB-display" class="text-2xl font-black text-slate-300 tracking-wide uppercase drop-shadow">DANNY CLUB</p>
+                                <div class="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 text-[11px] font-bold px-2.5 py-1 rounded-lg border border-emerald-500/20 mt-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                                    <span id="status-display">DANNY CLUB Batting Live 🏏</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="relative overflow-hidden rounded-3xl border border-cyan-500/30 bg-gradient-to-br from-cyan-950/70 via-slate-950/90 to-slate-950 p-6 shadow-xl neon-glow-cyan">
+                        <div class="absolute top-0 right-0 bg-gradient-to-l from-cyan-500/10 to-transparent w-full h-full pointer-events-none"></div>
+                        
+                        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-4 mb-5">
+                            <div>
+                                <span class="inline-flex items-center gap-1.5 bg-cyan-500/10 text-cyan-400 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full sports-font mb-2 border border-cyan-500/20">
+                                    <i class="fa-solid fa-snowflake animate-spin [animation-duration:8s]"></i> LIVE MATCH PERKS
+                                </span>
+                                <h2 class="sports-font text-xl md:text-2xl font-black uppercase tracking-tight text-white">
+                                    🥤 On-Spot Instant Perks (Cold Drink Rewards)
+                                </h2>
+                                <p class="text-slate-400 text-xs md:text-sm mt-0.5">
+                                    मैदान पर लाइव परफॉरमेंस दिखाएं और कमिटी काउंटर से तुरंत अपना चिल्ड <span class="text-cyan-400 font-bold">Cold Drink</span> इनाम कलेक्ट करें!
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="group bg-slate-900/50 border border-slate-800/80 p-4 rounded-xl hover:border-cyan-500/30 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-3.5">
+                                <div class="w-12 h-12 bg-gradient-to-br from-cyan-500/20 to-blue-500/10 text-cyan-400 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-lg group-hover:scale-105 transition-transform">🥤</div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-cyan-400 uppercase tracking-widest sports-font">BATSMAN</p>
+                                    <h3 class="text-sm font-bold text-white">लगातार 3 छक्के</h3>
+                                    <p class="text-slate-400 text-[11px] mt-0.5">(3 Sixes In Row) &rarr; <span class="text-cyan-300 font-bold">1x Cold Drink</span></p>
+                                </div>
+                            </div>
+                            <div class="group bg-slate-900/50 border border-slate-800/80 p-4 rounded-xl hover:border-cyan-500/30 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-3.5">
+                                <div class="w-12 h-12 bg-gradient-to-br from-cyan-500/20 to-blue-500/10 text-cyan-400 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-lg group-hover:scale-105 transition-transform">🧊</div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-cyan-400 uppercase tracking-widest sports-font">BOWLER</p>
+                                    <h3 class="text-sm font-bold text-white">विकेट हैट्रिक</h3>
+                                    <p class="text-slate-400 text-[11px] mt-0.5">(3 Wickets Hat-Trick) &rarr; <span class="text-cyan-300 font-bold">1x Cold Drink</span></p>
+                                </div>
+                            </div>
+                            <div class="group bg-slate-900/50 border border-slate-800/80 p-4 rounded-xl hover:border-cyan-500/30 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-3.5">
+                                <div class="w-12 h-12 bg-gradient-to-br from-cyan-500/20 to-blue-500/10 text-cyan-400 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-lg group-hover:scale-105 transition-transform">👑</div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-cyan-400 uppercase tracking-widest sports-font">MEGA HERO</p>
+                                    <h3 class="text-sm font-bold text-white">व्यक्तिगत अर्धशतक</h3>
+                                    <p class="text-slate-400 text-[11px] mt-0.5">(Individual 50 Runs) &rarr; <span class="text-cyan-300 font-bold">Premium Pack</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="glass-panel p-4 rounded-2xl text-center border-t-2 border-t-amber-500 shadow-xl">
+                            <p class="sports-font text-[11px] tracking-widest text-amber-500 font-black">WINNER CASH</p>
+                            <p class="sports-font text-2xl font-black text-white mt-0.5">₹ 2,500</p>
+                            <p class="text-xs text-slate-400 mt-0.5 font-medium">+ Mega Gold Trophy</p>
+                        </div>
+                        <div class="glass-panel p-4 rounded-2xl text-center border-t-2 border-t-slate-400 shadow-xl">
+                            <p class="sports-font text-[11px] tracking-widest text-slate-400 font-black">RUNNER UP CASH</p>
+                            <p class="sports-font text-2xl font-black text-white mt-0.5">₹ 1,500</p>
+                            <p class="text-xs text-slate-400 mt-0.5 font-medium">+ Silver Trophy</p>
+                        </div>
+                        <div class="glass-panel p-4 rounded-2xl text-center border-t-2 border-t-emerald-500 shadow-xl">
+                            <p class="sports-font text-[11px] tracking-widest text-emerald-400 font-black">REGISTRATION</p>
+                            <p class="sports-font text-2xl font-black text-white mt-0.5">₹ 900</p>
+                            <p class="text-xs text-emerald-400 font-bold mt-0.5">Per Team Slot Only</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <section class="glass-panel p-5 rounded-3xl space-y-4">
+                        <h2 class="sports-font text-sm font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-days"></i> Match Schedule Info
+                        </h2>
+                        <div class="space-y-2 text-xs text-slate-300">
+                            <p class="bg-slate-950/60 p-3 rounded-xl border border-slate-900">
+                                <span class="text-amber-400 font-bold block">START DATE:</span> 13 जून से महामुकाबला शुरू।
+                            </p>
+                            <p class="bg-slate-950/60 p-3 rounded-xl border border-slate-900">
+                                <span class="text-amber-400 font-bold block">VENUE LOCATION:</span> काजीबिगहा रेलवे LINE के ठीक बगल में।
+                            </p>
+                        </div>
+                    </section>
+
+                    <section class="glass-panel p-5 rounded-3xl space-y-3">
+                        <h2 class="sports-font text-sm font-bold text-sky-400 flex items-center gap-2">
+                            <i class="fa-solid fa-headset"></i> Organizing Helpline
+                        </h2>
+                        <div class="grid grid-cols-1 gap-2 text-xs">
+                            <div class="p-2.5 bg-slate-950/50 rounded-xl flex justify-between items-center">
+                                <span class="font-bold text-white">पीयूष राज</span>
+                                <span class="text-sky-400 font-mono font-bold">8434319380</span>
+                            </div>
+                            <div class="p-2.5 bg-slate-950/50 rounded-xl flex justify-between items-center">
+                                <span class="font-bold text-white">आयूष राज</span>
+                                <span class="text-sky-400 font-mono font-bold">9470668202</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <div id="content-table" class="tab-content hidden max-w-5xl mx-auto space-y-6">
+            <section class="glass-panel p-6 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-4 mb-6">
+                    <div>
+                        <h2 class="sports-font text-2xl font-black text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-table-list"></i> KPL S2 Points Table
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-0.5">लीग स्टेज की लाइव रैंकिंग और क्वालिफिकेशन स्टेटस</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 text-[10px] font-bold">
+                        <span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-md uppercase tracking-wider">👉 Top 4 Semi-Finals Me Jayenge</span>
+                        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-md uppercase tracking-wider">👉 Top 2 Direct Finals Me</span>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-900 bg-slate-950/40">
+                    <table class="w-full text-left border-collapse min-w-[650px]">
+                        <thead>
+                            <tr class="bg-slate-950 text-slate-400 text-xs font-bold sports-font border-b border-slate-900">
+                                <th class="p-4 text-center w-12">POS</th>
+                                <th class="p-4">TEAM NAME</th>
+                                <th class="p-4 text-center">MATCH PLAYED</th>
+                                <th class="p-4 text-center text-emerald-400">WINS (W)</th>
+                                <th class="p-4 text-center text-red-400">LOSSES (L)</th>
+                                <th class="p-4 text-center text-amber-400 font-black">POINTS (PTS)</th>
+                                <th class="p-4 text-center">QUALIFICATION STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="points-table-body" class="text-xs md:text-sm divide-y divide-slate-900 font-medium">
+                        </tbody>
+                        <!-- <tbody id="points-table-body" class="text-xs md:text-sm divide-y divide-slate-900 font-medium">
+                            <tr class="hover:bg-slate-900/30 transition-colors">
+                                <td class="p-4 text-center font-bold text-amber-500 sports-font">1</td>
+                                <td class="p-4 font-black text-white">KAJIBIGHA XI</td>
+                                <td class="p-4 text-center font-mono">4</td>
+                                <td class="p-4 text-center font-mono text-emerald-400">3</td>
+                                <td class="p-4 text-center font-mono text-red-400">1</td>
+                                <td class="p-4 text-center font-mono font-black text-amber-400 text-base">6</td>
+                                <td class="p-4 text-center">
+                                    <span class="inline-flex items-center gap-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider sports-font animate-pulse">
+                                        <i class="fa-solid fa-trophy text-[9px]"></i> Qualified For Final 👑
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-900/30 transition-colors">
+                                <td class="p-4 text-center font-bold text-slate-400 sports-font">2</td>
+                                <td class="p-4 font-black text-white">DANNY CLUB</td>
+                                <td class="p-4 text-center font-mono">3</td>
+                                <td class="p-4 text-center font-mono text-emerald-400">2</td>
+                                <td class="p-4 text-center font-mono text-red-400">1</td>
+                                <td class="p-4 text-center font-mono font-black text-amber-400 text-base">4</td>
+                                <td class="p-4 text-center">
+                                    <span class="inline-flex items-center gap-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider sports-font">
+                                        <i class="fa-solid fa-circle-check text-[9px]"></i> Qualified For Semi-Final 🏏
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-900/30 transition-colors">
+                                <td class="p-4 text-center font-bold text-slate-500 sports-font">3</td>
+                                <td class="p-4 font-black text-slate-300">STAR XI BHAGALPUR</td>
+                                <td class="p-4 text-center font-mono">3</td>
+                                <td class="p-4 text-center font-mono text-emerald-400">2</td>
+                                <td class="p-4 text-center font-mono text-red-400">1</td>
+                                <td class="p-4 text-center font-mono font-black text-amber-400 text-base">4</td>
+                                <td class="p-4 text-center">
+                                    <span class="inline-flex items-center gap-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider sports-font">
+                                        <i class="fa-solid fa-circle-check text-[9px]"></i> Qualified For Semi-Final 🏏
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-900/30 transition-colors">
+                                <td class="p-4 text-center font-bold text-slate-500 sports-font">4</td>
+                                <td class="p-4 font-black text-slate-300">ROYAL CHALLENGERS KPL</td>
+                                <td class="p-4 text-center font-mono">4</td>
+                                <td class="p-4 text-center font-mono text-emerald-400">1</td>
+                                <td class="p-4 text-center font-mono text-red-400">3</td>
+                                <td class="p-4 text-center font-mono font-black text-amber-400 text-base">2</td>
+                                <td class="p-4 text-center">
+                                    <span class="inline-flex items-center gap-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider sports-font">
+                                        In Race 🏃‍♂️
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-900/30 transition-colors opacity-60">
+                                <td class="p-4 text-center font-bold text-slate-600 sports-font">5</td>
+                                <td class="p-4 font-black text-slate-400">YUVAN CLUB</td>
+                                <td class="p-4 text-center font-mono">4</td>
+                                <td class="p-4 text-center font-mono text-emerald-500/40">0</td>
+                                <td class="p-4 text-center font-mono text-red-500/40">4</td>
+                                <td class="p-4 text-center font-mono font-black text-amber-500/40 text-base">0</td>
+                                <td class="p-4 text-center">
+                                    <span class="inline-flex items-center gap-1 bg-red-500/10 text-red-400 border border-red-500/20 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider sports-font">
+                                        Knocked Out ❌
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody> -->
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <div id="content-rules" class="tab-content hidden max-w-4xl mx-auto space-y-6">
+            <section class="glass-panel p-6 md:p-8 rounded-3xl space-y-6 shadow-2xl border border-amber-500/20">
+                <h2 class="sports-font text-2xl font-black flex items-center gap-3 text-amber-400 border-b border-slate-800 pb-4">
+                    <i class="fa-solid fa-gavel text-amber-500"></i> आधिकारिक नियम एवं शर्तें (Official Tournament Bye-Laws)
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-base text-slate-200">
+                    <div class="p-4 bg-slate-950/70 rounded-2xl border border-slate-900 flex gap-3 hover:border-slate-800 transition">
+                        <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 shrink-0 font-bold">1</div>
+                        <span>यह टूर्नामेंट विशेष रूप से केवल <strong>पंचायत स्तर (Panchayat Level Only)</strong> की स्थानीय टीमों के लिए ही पूरी तरह से मान्य है। बाहर के प्रोफेशनल खिलाड़ी वर्जित हैं।</span>
+                    </div>
+
+                    <div class="p-4 bg-slate-950/70 rounded-2xl border border-slate-900 flex gap-3 hover:border-slate-800 transition">
+                        <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 shrink-0 font-bold">2</div>
+                        <span>मैदान पर तैनात ऑन-फील्ड अम्पायर एवं आधिकारिक कमेंट्री पैनल का निर्णय ही सर्वमान्य तथा <strong>अंतिम (Final Decision)</strong> माना जाएगा। किसी भी बहस पर सीधे बैन लगाया जा सकता है।</span>
+                    </div>
+
+                    <div class="p-4 bg-slate-950/70 rounded-2xl border border-slate-900 flex gap-3 hover:border-slate-800 transition">
+                        <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 shrink-0 font-bold">3</div>
+                        <span>पारदर्शिता बनाए रखने के लिए अनिवार्य है कि सभी खिलाड़ी अपना मूल ID Proof मैच से पहले कमेटी के पास अनिवार्य रूप से जमा करें।</span>
+                    </div>
+
+                    <div class="p-4 bg-red-950/40 rounded-2xl border border-red-500/30 flex gap-3 text-red-200 font-medium">
+                        <div class="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center text-red-400 shrink-0 font-black">!</div>
+                        <span><strong>सख्त चेतावनी (Strict Ban):</strong> थ्रो बॉलर (Illegal Throw Bowling Action) को बिना किसी भी तरह की पूर्व चेतावनी के तत्काल प्रभाव से मैच और टूर्नामेंट से निष्कासित (Expelled) कर दिया जाएगा।</span>
+                    </div>
+
+                    <div class="p-4 bg-slate-950/70 rounded-2xl border border-slate-900 flex gap-3 hover:border-slate-800 transition">
+                        <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 shrink-0 font-bold">4</div>
+                        <span>टूर्नामेंट की सभी सामग्रियां प्रामाणिक होंगी। पूरा टूर्नामेंट पूरी तरह से असली <strong>लाल हैवी टेनिस बॉल (खन्ना स्वस्तिक ब्रांड)</strong> द्वारा संपन्न कराया जाएगा।</span>
+                    </div>
+
+                    <div class="p-4 bg-red-950/40 rounded-2xl border border-red-500/30 flex gap-3 text-red-200 font-medium">
+                        <div class="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center text-red-400 shrink-0 font-black">!</div>
+                        <span>किसी भी प्रकार की मैदान पर अनुशासनहीनता, गाली-गलौज, या अम्पायर एवं कमिटी के साथ अभद्र व्यवहार करने वाली टीम का पंजीकरण (Registration) तुरंत रद्द कर दिया जाएगा।</span>
+                    </div>
+
+                    <div class="p-4 bg-slate-950/70 rounded-2xl border border-slate-900 flex gap-3 hover:border-slate-800 transition">
+                        <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 shrink-0 font-bold">5</div>
+                        <span>समय सीमा एवं ओवर नियम: नॉकआउट स्टेज तथा ग्रुप स्टेज के सभी सामान्य मुकाबले निर्धारित <strong>8-8 ओवर (8 Overs Match)</strong> के खेले जाएंगे।</span>
+                    </div>
+
+                    <div class="p-4 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-2xl border border-amber-500/40 flex gap-3 text-amber-400 font-black tracking-wide">
+                        <div class="w-8 h-8 rounded-lg bg-amber-500/30 flex items-center justify-center text-amber-300 shrink-0 font-bold"><i class="fa-solid fa-crown"></i></div>
+                        <span>ग्रैंड फिनाले महा-मुकाबला: टूर्नामेंट का अंतिम फाइनल मैच पूरे <strong>10-10 ओवर (10 Overs Grand Finale)</strong> का लाइव संपन्न होगा।</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div id="content-teams" class="tab-content hidden space-y-8">
+            <section class="max-w-4xl mx-auto bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 p-6 rounded-3xl border border-slate-900 shadow-2xl space-y-4">
+                <h2 class="sports-font text-lg font-bold text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-award"></i> व्यक्तिगत सम्मान लीडरबोर्ड (Leaderboard Tournament Caps)
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs md:text-sm">
+                    <div class="p-4 bg-slate-950 rounded-xl border border-slate-900 flex justify-between items-center">
+                        <div><p class="font-bold text-white">सर्वश्रेष्ठ बल्लेबाज</p><p class="text-[11px] text-slate-500">Orange Cap 👑</p></div>
+                        <span class="bg-gradient-to-r from-orange-600 to-amber-500 text-slate-950 px-2.5 py-1.5 rounded-md font-black sports-font text-[10px]">ORANGE CAP</span>
+                    </div>
+                    <div class="p-4 bg-slate-950 rounded-xl border border-slate-900 flex justify-between items-center">
+                        <div><p class="font-bold text-white">सर्वश्रेष्ठ गेंदबाज</p><p class="text-[11px] text-slate-500">Purple Cap 🧢</p></div>
+                        <span class="bg-gradient-to-r from-purple-700 to-indigo-600 text-white px-2.5 py-1.5 rounded-md font-black sports-font text-[10px]">PURPLE CAP</span>
+                    </div>
+                    <div class="p-4 bg-slate-950 rounded-xl border border-slate-900 flex justify-between items-center">
+                        <div><p class="font-bold text-white">बेस्ट विकेटकीपर</p><p class="text-[11px] text-slate-500">Gloves 🧤</p></div>
+                        <span class="bg-blue-500/10 text-blue-400 border border-blue-500/30 px-2.5 py-1.5 rounded-md font-bold sports-font text-[10px]">GLOVES</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> -->
+                <!-- इसे अपने index.html में content-teams के अंदर रखें -->
+<div id="teams-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- स्क्वाड का डेटा यहाँ अपने आप आएगा -->
+</div>
+                <!-- <div class="glass-panel p-6 rounded-3xl border border-amber-500/10">
+                    <h3 class="sports-font text-xl font-black text-amber-400 border-b border-slate-900 pb-3 mb-4 flex justify-between items-center">
+                        <span>KAJIBIGHA XI</span> <span class="text-xs bg-amber-500/10 px-2 py-0.5 rounded text-amber-300 font-bold font-mono">SQUAD 01</span>
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2 text-xs md:text-sm text-slate-300">
+                        <div class="p-2.5 bg-slate-950/50 rounded-xl">👑 पीयूष राज (C)</div>
+                        <div class="p-2.5 bg-slate-950/50 rounded-xl">🏏 आयुष राज (VC)</div>
+                        <div class="p-2.5 bg-slate-950/50 rounded-xl">🥎 गौरव कुमार</div>
+                        <div class="p-2.5 bg-slate-950/50 rounded-xl">🥎 सौरव कुमार</div>
+                        <div class="p-2.5 bg-slate-950/50 rounded-xl">🏏 राहुल कुमार</div>
+                        <div class="p-2.5 bg-slate-950/50 rounded-xl">🧤 अमित कुमार (WK)</div>
+                    </div>
+                </div>
+                <div class="glass-panel p-6 rounded-3xl border border-slate-800">
+                    <h3 class="sports-font text-xl font-black text-slate-300 border-b border-slate-900 pb-3 mb-4 flex justify-between items-center">
+                        <span>DANNY CLUB</span> <span class="text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-400 font-bold font-mono">SQUAD 02</span>
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2 text-xs md:text-sm text-slate-300">
+                        <div class="p-2.5 bg-slate-950/50 rounded-xl">👑 डैनी सिंह (C)</div>
+                        <div class="p-2.5 bg-slate-950/50 rounded-xl">🏏 सोनू कुमार</div>
+                        <div class="p-2.5 bg-slate-950/50 rounded-xl">🥎 विकास कुमार</div>
+                        <div class="p-2.5 bg-slate-950/50 rounded-xl">🥎 राजा बाबू</div>
+                        <div class="p-2.5 bg-slate-950/50 rounded-xl">🧤 मुन्ना जी (WK)</div>
+                        <div class="p-2.5 bg-slate-950/50 rounded-xl">🏏 golu कुमार</div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <div id="content-fan" class="tab-content hidden space-y-8 max-w-4xl mx-auto">
+            <div class="glass-panel p-5 rounded-3xl overflow-hidden shadow-2xl border border-slate-800">
+                <div class="aspect-video bg-slate-950 rounded-2xl flex flex-col items-center justify-center relative overflow-hidden border border-slate-900">
+                    <div class="absolute inset-0 bg-cover bg-center opacity-25" style="background-image: url('https://images.unsplash.com/photo-1540747737956-3787217526ed?q=80&w=1000');"></div>
+                    <div class="relative z-10 text-center space-y-3 px-4">
+                        <div class="w-14 h-14 rounded-full bg-red-600 text-white flex items-center justify-center text-xl mx-auto shadow-2xl animate-pulse">
+                            <i class="fa-solid fa-play ml-1"></i>
+                        </div>
+                        <p class="sports-font text-base font-black tracking-wide">KPL MATCH STREAM / OVERLAY ZONE</p>
+                        <p class="text-xs text-slate-500 max-w-xs mx-auto">Match shuru hote hi YouTube / Facebook Live link ko directly yahan embed kar diya jayega.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel p-6 rounded-3xl space-y-6 shadow-2xl border border-slate-800 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-amber-500 via-transparent to-red-500"></div>
+                
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-2 border-b border-slate-900 pb-4">
+                    <div class="text-center sm:text-left">
+                        <span class="bg-amber-500/10 text-amber-400 text-[10px] tracking-widest font-black uppercase px-3 py-1 rounded-full sports-font border border-amber-500/20">LIVE FAN POLL</span>
+                        <h3 class="sports-font text-xl md:text-2xl font-black text-white mt-2">आज का महा-मुकाबला कौन जीतेगा?</h3>
+                    </div>
+                    <div class="bg-slate-950 px-4 py-2 rounded-xl border border-slate-900 text-center">
+                        <span class="text-[10px] text-slate-500 block font-bold uppercase tracking-wider">Total Casted Votes</span>
+                        <span id="total-votes-display" class="font-mono text-sm font-black text-amber-400">Loading...</span>
+                    </div>
+                </div>
+
+                <div id="poll-message" class="text-center text-xs font-bold min-h-[16px]"></div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                    <div id="card-voteA" onclick="castVote('A')" class="group bg-slate-950/60 border border-amber-500/20 p-5 rounded-2xl cursor-pointer hover:border-amber-500/50 hover:bg-slate-900 transition-all duration-300 relative overflow-hidden">
+                        <div class="flex justify-between items-center mb-3">
+                            <div>
+                                <p class="text-[10px] text-amber-500 font-bold sports-font uppercase tracking-wider">TEAM ONE</p>
+                                <h4 class="text-lg font-black text-white group-hover:text-amber-400 transition-colors">KAJIBIGHA XI</h4>
+                            </div>
+                            <span id="voteA-pct" class="sports-font text-2xl font-black text-amber-400 bg-amber-500/5 px-3 py-1 rounded-xl border border-amber-500/10">60%</span>
+                        </div>
+                        <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-950 mb-2">
+                            <div id="voteA-bar" class="bg-gradient-to-r from-amber-500 to-orange-500 h-full transition-all duration-700 rounded-full" style="width: 60%"></div>
+                        </div>
+                        <p id="voteA-status-txt" class="text-right text-[9px] text-slate-500 font-bold uppercase tracking-wider group-hover:text-amber-400/70 transition-colors">👉 Tap to Back Team</p>
+                    </div>
+
+                    <div id="card-voteB" onclick="castVote('B')" class="group bg-slate-950/60 border border-red-500/20 p-5 rounded-2xl cursor-pointer hover:border-red-500/50 hover:bg-slate-900 transition-all duration-300 relative overflow-hidden">
+                        <div class="flex justify-between items-center mb-3">
+                            <div>
+                                <p class="text-[10px] text-red-500 font-bold sports-font uppercase tracking-wider">TEAM TWO</p>
+                                <h4 class="text-lg font-black text-slate-200 group-hover:text-red-400 transition-colors">DANNY CLUB</h4>
+                            </div>
+                            <span id="voteB-pct" class="sports-font text-2xl font-black text-red-500 bg-red-500/5 px-3 py-1 rounded-xl border border-red-500/10">40%</span>
+                        </div>
+                        <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-950 mb-2">
+                            <div id="voteB-bar" class="bg-gradient-to-r from-red-600 to-rose-500 h-full transition-all duration-700 rounded-full" style="width: 40%"></div>
+                        </div>
+                        <p id="voteB-status-txt" class="text-right text-[9px] text-slate-500 font-bold uppercase tracking-wider group-hover:text-red-400/70 transition-colors">👉 Tap to Back Team</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <section class="max-w-7xl mx-auto px-4 py-8 border-t border-slate-900/60 mt-12">
+        <h2 class="sports-font text-center text-lg font-black text-rose-400 mb-6 uppercase tracking-widest"><i class="fa-solid fa-handshake-angle"></i> मुख्य प्रायोजक (Grand Official Sponsors)</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs md:text-sm">
+            <div class="glass-panel p-4 rounded-xl text-center">🔥 <span class="font-extrabold text-rose-300">शिवम् नवोदय पब्लिक स्कूल</span> <p class="text-[11px] text-slate-500 mt-0.5">काजीबिगहा दनियावां (पटना)</p></div>
+            <div class="glass-panel p-4 rounded-xl text-center">🔥 <span class="font-extrabold text-rose-300">आनंद इंटरप्राइजेज</span> <p class="text-[11px] text-slate-500 mt-0.5">काजीबिगहा</p></div>
+            <div class="glass-panel p-4 rounded-xl text-center">🔥 <span class="font-extrabold text-rose-300">पूजा स्टूडियो</span> <p class="text-[11px] text-slate-500 mt-0.5">दनियावां (फतुहाँ)</p></div>
+            <div class="glass-panel p-4 rounded-xl text-center">🔥 <span class="font-extrabold text-rose-300">सुनील कुमार (Advocate)</span> <p class="text-[11px] text-slate-500 mt-0.5">विशेष सहयोग कमिटी</p></div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-950 text-center py-12 border-t border-slate-900 text-xs text-slate-600 backdrop-blur-md">
+        <p class="sports-font tracking-widest text-slate-400 font-bold uppercase text-[11px]">© 2026 KAJIBIGHA PREMIER LEAGUE • OFFICIAL DIGITAL PLATFORM</p>
+        <p class="text-[10px] mt-1 text-slate-700">Multi-Admin Sync Enabled Backend Architecture Engine • V4.0 Professional Pro</p>
+    </footer>
+
+    <script>
+        // Tab Switcher Controller
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('nav button').forEach(btn => {
+                btn.classList.remove('bg-red-600', 'text-white', 'shadow-lg');
+                btn.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-slate-900');
+            });
+
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-slate-900');
+            activeBtn.classList.add('bg-red-600', 'text-white', 'shadow-lg');
+        }
+
+        // Advanced Single Cast Voting Engine Matrix
+        let countA = 744; // Premium Mock Initial Numbers
+        let countB = 496; 
+        let totalVotes = countA + countB;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Total live vote count refresh on layout initiation
+            const totalDisplay = document.getElementById('total-votes-display');
+            if(totalDisplay) totalDisplay.innerText = totalVotes.toLocaleString();
+
+            if (localStorage.getItem("kpl_has_voted")) {
+                applyLockedUIVisuals();
+                const msg = document.getElementById('poll-message');
+                if(msg) {
+                    msg.innerText = "🔒 YOUR VALUED MATCH PREDICTION HAS BEEN LOCKED!";
+                    msg.className = "text-center text-xs font-black text-amber-500 tracking-widest uppercase animate-pulse";
+                }
+            }
+        });
+
+        // Remove pointer triggers once vote is registered
+        function applyLockedUIVisuals() {
+            const cardA = document.getElementById('card-voteA');
+            const cardB = document.getElementById('card-voteB');
+            const txtA = document.getElementById('voteA-status-txt');
+            const txtB = document.getElementById('voteB-status-txt');
+
+            if(cardA && cardB) {
+                cardA.classList.remove('cursor-pointer', 'hover:border-amber-500/50', 'hover:bg-slate-900');
+                cardB.classList.remove('cursor-pointer', 'hover:border-red-500/50', 'hover:bg-slate-900');
+                cardA.style.pointerEvents = "none";
+                cardB.style.pointerEvents = "none";
+            }
+            if(txtA && txtB) {
+                txtA.innerText = "✓ SELECTION SUBMITTED";
+                txtB.innerText = "✓ SELECTION SUBMITTED";
+                txtA.className = "text-right text-[10px] text-emerald-500 font-mono font-bold uppercase tracking-wider";
+                txtB.className = "text-right text-[10px] text-emerald-500 font-mono font-bold uppercase tracking-wider";
+            }
+        }
+
+        function castVote(team) {
+            if (localStorage.getItem("kpl_has_voted")) return;
+
+            // Incremental Logic
+            if(team === 'A') countA += 12; else countB += 12;
+            totalVotes = countA + countB;
+            
+            let pctA = Math.round((countA / totalVotes) * 100);
+            let pctB = 100 - pctA;
+            
+            // Smooth DOM Update
+            document.getElementById('voteA-pct').innerText = pctA + '%';
+            document.getElementById('voteB-pct').innerText = pctB + '%';
+            document.getElementById('voteA-bar').style.width = pctA + '%';
+            document.getElementById('voteB-bar').style.width = pctB + '%';
+            document.getElementById('total-votes-display').innerText = totalVotes.toLocaleString();
+            
+            // Save locally
+            localStorage.setItem("kpl_has_voted", "true");
+            applyLockedUIVisuals();
+            
+            const msgElement = document.getElementById('poll-message');
+            if(msgElement) {
+                msgElement.innerText = "SUCCESSFULLY RECORDED! 🎉 THANKS FOR PLAYING.";
+                msgElement.className = "text-center text-xs font-black text-emerald-400 tracking-wider uppercase animate-bounce";
+            }
+            
+            // Multi-angle beautiful confetti launch!
+            confetti({ particleCount: 70, spread: 80, origin: { y: 0.8 } });
+        }
+
+        // Confetti Celebration Trigger
+        function celebrateWin() {
+            confetti({ particleCount: 140, spread: 80, scalar: 1.2 });
+        }
+
+        // Multiple Admin Google Sheets Live Score Synchronization
+        const sheetCsvUrl = "YOUR_GOOGLE_SHEET_CSV_LINK_HERE";
+
+    
+    // अपने 3 पब्लिश किए हुए CSV लिंक यहाँ डालें
+    const liveLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSv46xMBH9vqs9EgMemrhemOgEZOd76IeROPkd2GkU7Z3QY28tigHOlm21MbeR-n53UlAPF0taeEG-B/pub?gid=0&single=true&output=csv";
+    const pointsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSv46xMBH9vqs9EgMemrhemOgEZOd76IeROPkd2GkU7Z3QY28tigHOlm21MbeR-n53UlAPF0taeEG-B/pub?gid=1975900141&single=true&output=csv";
+    const squadsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSv46xMBH9vqs9EgMemrhemOgEZOd76IeROPkd2GkU7Z3QY28tigHOlm21MbeR-n53UlAPF0taeEG-B/pub?gid=1196433611&single=true&output=csv";
+
+    async function updateKPL() {
+    // 1. Live Score अपडेट
+    try {
+        const response = await fetch(liveLink);
+        if (!response.ok) throw new Error('Live Data Network error');
+        const data = await response.text();
+        const row = data.split('\n')[1].split(',');
+        document.getElementById('teamA-display').innerText = row[0];
+        document.getElementById('teamB-display').innerText = row[1];
+        document.getElementById('score-display').innerText = row[2];
+        document.getElementById('overs-display').innerText = `(${row[3]} OV)`;
+        document.getElementById('status-display').innerText = row[4];
+    } catch (error) {
+        console.error("Live Score Update Failed:", error);
+    }
+
+    // 2. Points Table अपडेट
+    try {
+        const resTable = await fetch(pointsLink);
+        const dataTable = await resTable.text();
+        const rows = dataTable.split('\n');
+        let html = "";
+        for(let i=1; i<rows.length; i++) {
+            const c = rows[i].split(',');
+            if(c.length < 6) continue;
+            html += `<tr class="hover:bg-slate-900/30">
+                <td class="p-4 text-center font-bold text-amber-500">${c[0]}</td>
+                <td class="p-4 font-black text-white">${c[1]}</td>
+                <td class="p-4 text-center font-mono">${c[2]}</td>
+                <td class="p-4 text-center font-mono text-emerald-400">${c[3]}</td>
+                <td class="p-4 text-center font-mono text-red-400">${c[4]}</td>
+                <td class="p-4 text-center font-black text-amber-400">${c[5]}</td>
+            </tr>`;
+        }
+        document.getElementById('points-table-body').innerHTML = html;
+    } catch (error) {
+        console.error("Points Table Update Failed:", error);
+    }
+
+    // 3. Squads अपडेट
+    try {
+        const resSquad = await fetch(squadsLink);
+        const dataSquad = await resSquad.text();
+        const rows = dataSquad.split('\n');
+        let teams = {};
+        
+        for(let i=1; i<rows.length; i++) {
+            const c = rows[i].split(',');
+            if(c.length < 2) continue;
+            if(!teams[c[0]]) teams[c[0]] = [];
+            teams[c[0]].push(c[1]);
+        }
+
+        let html = "";
+        for(let teamName in teams) {
+            html += `<div class="glass-panel p-6 rounded-3xl border border-slate-800">
+                        <h3 class="sports-font text-xl font-black text-amber-400 mb-4">${teamName}</h3>
+                        <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">`;
+            teams[teamName].forEach(player => {
+                html += `<div class="p-2.5 bg-slate-950/50 rounded-xl">${player}</div>`;
+            });
+            html += `</div></div>`;
+        }
+        document.getElementById('teams-container').innerHTML = html;
+    } catch (error) {
+        console.error("Squads Update Failed:", error);
+    }
+}
+
+    </script>
+</body>
+</html>
