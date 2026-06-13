@@ -654,33 +654,79 @@
     }
 
     // 3. Squads अपडेट
-    try {
-        const resSquad = await fetch(squadsLink);
-        const dataSquad = await resSquad.text();
-        const rows = dataSquad.split('\n');
-        let teams = {};
+    // try {
+    //     const resSquad = await fetch(squadsLink);
+    //     const dataSquad = await resSquad.text();
+    //     const rows = dataSquad.split('\n');
+    //     let teams = {};
         
-        for(let i=1; i<rows.length; i++) {
-            const c = rows[i].split(',');
-            if(c.length < 2) continue;
+    //     for(let i=1; i<rows.length; i++) {
+    //         const c = rows[i].split(',');
+    //         if(c.length < 2) continue;
+    //         if(!teams[c[0]]) teams[c[0]] = [];
+    //         teams[c[0]].push(c[1]);
+    //     }
+
+    //     let html = "";
+    //     for(let teamName in teams) {
+    //         html += `<div class="glass-panel p-6 rounded-3xl border border-slate-800">
+    //                     <h3 class="sports-font text-xl font-black text-amber-400 mb-4">${teamName}</h3>
+    //                     <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">`;
+    //         teams[teamName].forEach(player => {
+    //             html += `<div class="p-2.5 bg-slate-950/50 rounded-xl">${player}</div>`;
+    //         });
+    //         html += `</div></div>`;
+    //     }
+    //     document.getElementById('teams-container').innerHTML = html;
+    // } catch (error) {
+    //     console.error("Squads Update Failed:", error);
+    // }
+
+        // 3. Squads अपडेट
+try {
+    const resSquad = await fetch(squadsLink);
+    const dataSquad = await resSquad.text();
+    // लाइन दर लाइन डेटा अलग करें और खाली लाइनों को हटाएं
+    const rows = dataSquad.trim().split(/\r?\n/);
+    let teams = {};
+    
+    // i=1 से शुरू करें (ताकि हेडर वाली लाइन छूट जाए)
+    for(let i = 1; i < rows.length; i++) {
+        // डेटा को कॉमा से तोड़ें (अगर डेटा में कॉमा है, तो भी यह सुरक्षित है)
+        const c = rows[i].split(',').map(item => item.trim());
+        
+        // सुनिश्चित करें कि टीम का नाम और खिलाड़ी का नाम खाली न हो
+        if(c.length >= 2 && c[0] !== "" && c[1] !== "") {
             if(!teams[c[0]]) teams[c[0]] = [];
             teams[c[0]].push(c[1]);
         }
-
-        let html = "";
-        for(let teamName in teams) {
-            html += `<div class="glass-panel p-6 rounded-3xl border border-slate-800">
-                        <h3 class="sports-font text-xl font-black text-amber-400 mb-4">${teamName}</h3>
-                        <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">`;
-            teams[teamName].forEach(player => {
-                html += `<div class="p-2.5 bg-slate-950/50 rounded-xl">${player}</div>`;
-            });
-            html += `</div></div>`;
-        }
-        document.getElementById('teams-container').innerHTML = html;
-    } catch (error) {
-        console.error("Squads Update Failed:", error);
     }
+
+    let html = "";
+    for(let teamName in teams) {
+        html += `
+        <div class="glass-panel p-6 rounded-3xl border border-slate-800">
+            <h3 class="sports-font text-xl font-black text-amber-400 mb-4 flex justify-between items-center">
+                ${teamName} 
+                <span class="text-[10px] bg-slate-900 px-2 py-1 rounded text-slate-400">Squad</span>
+            </h3>
+            <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">`;
+        
+        teams[teamName].forEach(player => {
+            html += `<div class="p-2.5 bg-slate-950/50 rounded-xl border border-slate-900/50">${player}</div>`;
+        });
+        
+        html += `</div></div>`;
+    }
+    
+    const container = document.getElementById('teams-container');
+    if(container) {
+        container.innerHTML = html;
+    }
+} catch (error) {
+    console.error("Squads Update Failed:", error);
+}
+        
 }
         // Add this at the end of your script
 document.addEventListener("DOMContentLoaded", () => {
