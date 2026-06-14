@@ -679,7 +679,7 @@ async function updatePlayerStats() {
 // पेज लोड होते ही और हर 2 सेकंड में अपडेट करें
 document.addEventListener("DOMContentLoaded", () => {
     updatePlayerStats();
-    setInterval(updatePlayerStats, 2000);
+    setInterval(updatePlayerStats, 5000);
 });
     
 
@@ -726,9 +726,9 @@ document.addEventListener("DOMContentLoaded", () => {
         updateSquads();
 
         // Auto refresh
-        setInterval(updateKPL, 2000);        // Live score every 2 seconds
+        setInterval(updateKPL, 3000);        // Live score every 3 seconds
         // setInterval(updatePlayerStats, 15000); // Stats every 15 seconds
-        setInterval(updateSquads, 3000);      // Squads every 3 seconds
+        setInterval(updateSquads, 4000);      // Squads every 4 seconds
     });
 </script>
     
