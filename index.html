@@ -500,52 +500,14 @@
         }
     });
 
-    function applyLockedUIVisuals() {
-        const cardA = document.getElementById('card-voteA');
-        const cardB = document.getElementById('card-voteB');
-        const txtA = document.getElementById('voteA-status-txt');
-        const txtB = document.getElementById('voteB-status-txt');
-
-        // चेक करें कि यूज़र ने किसे वोट दिया है
-        const votedFor = localStorage.getItem("kpl_has_voted");
-
-        if (cardA && cardB) {
-            cardA.classList.remove('cursor-pointer', 'hover:border-amber-500/50', 'hover:bg-slate-900');
-            cardB.classList.remove('cursor-pointer', 'hover:border-red-500/50', 'hover:bg-slate-900');
-            cardA.style.pointerEvents = "none";
-            cardB.style.pointerEvents = "none";
-        }
-
-        if (txtA && txtB) {
-            if (votedFor === 'A') {
-                txtA.innerText = "✓ YOUR PICK";
-                txtB.innerText = "🔒 LOCKED";
-                txtA.className = "text-right text-[11px] text-emerald-400 font-black uppercase tracking-wider";
-                txtB.className = "text-right text-[9px] text-slate-600 font-bold uppercase tracking-wider";
-                cardA.classList.add('border-emerald-500/40', 'bg-emerald-900/10'); // A को हाईलाइट
-                cardB.classList.add('opacity-40'); // B को हल्का करें
-            } else if (votedFor === 'B') {
-                txtB.innerText = "✓ YOUR PICK";
-                txtA.innerText = "🔒 LOCKED";
-                txtB.className = "text-right text-[11px] text-emerald-400 font-black uppercase tracking-wider";
-                txtA.className = "text-right text-[9px] text-slate-600 font-bold uppercase tracking-wider";
-                cardB.classList.add('border-emerald-500/40', 'bg-emerald-900/10'); // B को हाईलाइट
-                cardA.classList.add('opacity-40'); // A को हल्का करें
-            }
-        }
-
-        const msg = document.getElementById('poll-message');
-        if (msg) {
-            msg.innerHTML = `🔒 MATCH PREDICTION SAVED! <br><br> <button onclick="resetVote()" class="bg-slate-800 border border-amber-500/50 text-amber-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase shadow-lg hover:bg-amber-500 hover:text-slate-950 transition-all cursor-pointer">✏️ Edit Your Poll</button>`;
-            msg.className = "text-center text-xs font-black text-amber-500 tracking-widest uppercase";
-        }
-    }
-
     // function applyLockedUIVisuals() {
     //     const cardA = document.getElementById('card-voteA');
     //     const cardB = document.getElementById('card-voteB');
     //     const txtA = document.getElementById('voteA-status-txt');
     //     const txtB = document.getElementById('voteB-status-txt');
+
+    //     // चेक करें कि यूज़र ने किसे वोट दिया है
+    //     const votedFor = localStorage.getItem("kpl_has_voted");
 
     //     if (cardA && cardB) {
     //         cardA.classList.remove('cursor-pointer', 'hover:border-amber-500/50', 'hover:bg-slate-900');
@@ -553,20 +515,58 @@
     //         cardA.style.pointerEvents = "none";
     //         cardB.style.pointerEvents = "none";
     //     }
+
     //     if (txtA && txtB) {
-    //         txtA.innerText = "✓ SELECTION SUBMITTED";
-    //         txtB.innerText = "✓ SELECTION SUBMITTED";
-    //         txtA.className = "text-right text-[10px] text-emerald-500 font-mono font-bold uppercase tracking-wider";
-    //         txtB.className = "text-right text-[10px] text-emerald-500 font-mono font-bold uppercase tracking-wider";
+    //         if (votedFor === 'A') {
+    //             txtA.innerText = "✓ YOUR PICK";
+    //             txtB.innerText = "🔒 LOCKED";
+    //             txtA.className = "text-right text-[11px] text-emerald-400 font-black uppercase tracking-wider";
+    //             txtB.className = "text-right text-[9px] text-slate-600 font-bold uppercase tracking-wider";
+    //             cardA.classList.add('border-emerald-500/40', 'bg-emerald-900/10'); // A को हाईलाइट
+    //             cardB.classList.add('opacity-40'); // B को हल्का करें
+    //         } else if (votedFor === 'B') {
+    //             txtB.innerText = "✓ YOUR PICK";
+    //             txtA.innerText = "🔒 LOCKED";
+    //             txtB.className = "text-right text-[11px] text-emerald-400 font-black uppercase tracking-wider";
+    //             txtA.className = "text-right text-[9px] text-slate-600 font-bold uppercase tracking-wider";
+    //             cardB.classList.add('border-emerald-500/40', 'bg-emerald-900/10'); // B को हाईलाइट
+    //             cardA.classList.add('opacity-40'); // A को हल्का करें
+    //         }
     //     }
 
-    //     // 👇 यह कोड 'Edit Your Poll' बटन दिखाएगा 👇
     //     const msg = document.getElementById('poll-message');
     //     if (msg) {
-    //         msg.innerHTML = `🔒 YOUR MATCH PREDICTION IS LOCKED! <br><br> <button onclick="resetVote()" class="bg-slate-800 border border-amber-500/50 text-amber-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase shadow-lg hover:bg-amber-500 hover:text-slate-950 transition-all cursor-pointer">✏️ Edit Your Poll</button>`;
+    //         msg.innerHTML = `🔒 MATCH PREDICTION SAVED! <br><br> <button onclick="resetVote()" class="bg-slate-800 border border-amber-500/50 text-amber-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase shadow-lg hover:bg-amber-500 hover:text-slate-950 transition-all cursor-pointer">✏️ Edit Your Poll</button>`;
     //         msg.className = "text-center text-xs font-black text-amber-500 tracking-widest uppercase";
     //     }
     // }
+
+    function applyLockedUIVisuals() {
+        const cardA = document.getElementById('card-voteA');
+        const cardB = document.getElementById('card-voteB');
+        const txtA = document.getElementById('voteA-status-txt');
+        const txtB = document.getElementById('voteB-status-txt');
+
+        if (cardA && cardB) {
+            cardA.classList.remove('cursor-pointer', 'hover:border-amber-500/50', 'hover:bg-slate-900');
+            cardB.classList.remove('cursor-pointer', 'hover:border-red-500/50', 'hover:bg-slate-900');
+            cardA.style.pointerEvents = "none";
+            cardB.style.pointerEvents = "none";
+        }
+        if (txtA && txtB) {
+            txtA.innerText = "✓ SELECTION SUBMITTED";
+            txtB.innerText = "✓ SELECTION SUBMITTED";
+            txtA.className = "text-right text-[10px] text-emerald-500 font-mono font-bold uppercase tracking-wider";
+            txtB.className = "text-right text-[10px] text-emerald-500 font-mono font-bold uppercase tracking-wider";
+        }
+
+        // 👇 यह कोड 'Edit Your Poll' बटन दिखाएगा 👇
+        const msg = document.getElementById('poll-message');
+        if (msg) {
+            msg.innerHTML = `🔒 YOUR MATCH PREDICTION IS LOCKED! <br><br> <button onclick="resetVote()" class="bg-slate-800 border border-amber-500/50 text-amber-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase shadow-lg hover:bg-amber-500 hover:text-slate-950 transition-all cursor-pointer">✏️ Edit Your Poll</button>`;
+            msg.className = "text-center text-xs font-black text-amber-500 tracking-widest uppercase";
+        }
+    }
 
     // 👇 यह नया फंक्शन है जो वोट को रिसेट करेगा 👇
     function resetVote() {
@@ -580,31 +580,7 @@
     }
 
     // 👇 यह नया फंक्शन है जो UI को वापस क्लिक करने लायक बनाएगा 👇
-       function unlockUIVisuals() {
-        const cardA = document.getElementById('card-voteA');
-        const cardB = document.getElementById('card-voteB');
-        const txtA = document.getElementById('voteA-status-txt');
-        const txtB = document.getElementById('voteB-status-txt');
-
-        if (cardA && cardB) {
-            cardA.classList.add('cursor-pointer', 'hover:border-amber-500/50', 'hover:bg-slate-900');
-            cardB.classList.add('cursor-pointer', 'hover:border-red-500/50', 'hover:bg-slate-900');
-            cardA.style.pointerEvents = "auto";
-            cardB.style.pointerEvents = "auto";
-            
-            // पुरानी हाईलाइट और ओपेसिटी (हल्कापन) हटा दें
-            cardA.classList.remove('opacity-40', 'border-emerald-500/40', 'bg-emerald-900/10');
-            cardB.classList.remove('opacity-40', 'border-emerald-500/40', 'bg-emerald-900/10');
-        }
-        if (txtA && txtB) {
-            txtA.innerText = "👉 Tap to Back Team";
-            txtB.innerText = "👉 Tap to Back Team";
-            txtA.className = "text-right text-[9px] text-slate-500 font-bold uppercase tracking-wider group-hover:text-amber-400/70 transition-colors";
-            txtB.className = "text-right text-[9px] text-slate-500 font-bold uppercase tracking-wider group-hover:text-red-400/70 transition-colors";
-        }
-    }
-        
-    // function unlockUIVisuals() {
+    //    function unlockUIVisuals() {
     //     const cardA = document.getElementById('card-voteA');
     //     const cardB = document.getElementById('card-voteB');
     //     const txtA = document.getElementById('voteA-status-txt');
@@ -615,6 +591,10 @@
     //         cardB.classList.add('cursor-pointer', 'hover:border-red-500/50', 'hover:bg-slate-900');
     //         cardA.style.pointerEvents = "auto";
     //         cardB.style.pointerEvents = "auto";
+            
+    //         // पुरानी हाईलाइट और ओपेसिटी (हल्कापन) हटा दें
+    //         cardA.classList.remove('opacity-40', 'border-emerald-500/40', 'bg-emerald-900/10');
+    //         cardB.classList.remove('opacity-40', 'border-emerald-500/40', 'bg-emerald-900/10');
     //     }
     //     if (txtA && txtB) {
     //         txtA.innerText = "👉 Tap to Back Team";
@@ -622,7 +602,27 @@
     //         txtA.className = "text-right text-[9px] text-slate-500 font-bold uppercase tracking-wider group-hover:text-amber-400/70 transition-colors";
     //         txtB.className = "text-right text-[9px] text-slate-500 font-bold uppercase tracking-wider group-hover:text-red-400/70 transition-colors";
     //     }
-    // }    
+    // }
+        
+    function unlockUIVisuals() {
+        const cardA = document.getElementById('card-voteA');
+        const cardB = document.getElementById('card-voteB');
+        const txtA = document.getElementById('voteA-status-txt');
+        const txtB = document.getElementById('voteB-status-txt');
+
+        if (cardA && cardB) {
+            cardA.classList.add('cursor-pointer', 'hover:border-amber-500/50', 'hover:bg-slate-900');
+            cardB.classList.add('cursor-pointer', 'hover:border-red-500/50', 'hover:bg-slate-900');
+            cardA.style.pointerEvents = "auto";
+            cardB.style.pointerEvents = "auto";
+        }
+        if (txtA && txtB) {
+            txtA.innerText = "👉 Tap to Back Team";
+            txtB.innerText = "👉 Tap to Back Team";
+            txtA.className = "text-right text-[9px] text-slate-500 font-bold uppercase tracking-wider group-hover:text-amber-400/70 transition-colors";
+            txtB.className = "text-right text-[9px] text-slate-500 font-bold uppercase tracking-wider group-hover:text-red-400/70 transition-colors";
+        }
+    }    
         
     function castVote(team) {
         if (localStorage.getItem("kpl_has_voted")) return;
@@ -678,86 +678,86 @@
 
     // Live Score + Points Table
     async function updateKPL() {
-           try {
+           // try {
+           //  const response = await fetch(liveLink);
+           //  const data = await response.text();
+            
+           //  // डेटा को ज्यादा सुरक्षित तरीके से पढ़ें
+           //  const rows = data.trim().split(/\r?\n/);
+           //  if (rows.length > 1) {
+           //      const row = parseCSVLine(rows[1]); // आपके ही बनाये हुए सेफ पार्सर का इस्तेमाल
+                
+           //      if (row.length >= 5) {
+           //          // .trim() लगाने से आगे-पीछे के फालतू स्पेस अपने आप हट जाएंगे
+           //          const team1Name = (row[0] || 'KAJIBIGHA XI').trim();
+           //          const team2Name = (row[1] || 'DANNY CLUB').trim();
+                    
+           //          const currentMatch = team1Name + "_vs_" + team2Name;
+           //          const savedMatch = localStorage.getItem("kpl_current_match");
+                    
+           //          // यह भी चेक करें कि नाम खाली (Blank) तो नहीं आ रहा
+           //          if (team1Name !== "" && team2Name !== "") {
+           //              if (savedMatch !== currentMatch && savedMatch !== null) {
+           //                  // नया मैच शुरू होने पर ही अनलॉक होगा
+           //                  localStorage.removeItem("kpl_has_voted"); 
+           //                  if(typeof unlockUIVisuals === 'function') unlockUIVisuals();
+           //                  const msg = document.getElementById('poll-message');
+           //                  if (msg) {
+           //                      msg.innerText = "🔥 NEW MATCH DETECTED! CAST YOUR VOTE NOW!";
+           //                      msg.className = "text-center text-xs font-black text-cyan-400 tracking-widest uppercase animate-pulse";
+           //                  }
+           //              }
+           //              localStorage.setItem("kpl_current_match", currentMatch);
+           //          }
+
+           //          // UI को अपडेट करें
+           //          document.getElementById('teamA-display').innerText = team1Name;
+           //          document.getElementById('teamB-display').innerText = team2Name;
+           //          document.getElementById('score-display').innerText = (row[2] || '0-0').trim();
+           //          document.getElementById('overs-display').innerText = `(${(row[3] || '0').trim()} OV)`;
+           //          document.getElementById('status-display').innerText = (row[4] || 'Live 🏏').trim();
+                    
+           //          if(document.getElementById('poll-teamA')) document.getElementById('poll-teamA').innerText = team1Name;
+           //          if(document.getElementById('poll-teamB')) document.getElementById('poll-teamB').innerText = team2Name;
+           //      }
+           //  }
+        try {
             const response = await fetch(liveLink);
             const data = await response.text();
+            const row = data.split('\n')[1]?.split(',') || [];
             
-            // डेटा को ज्यादा सुरक्षित तरीके से पढ़ें
-            const rows = data.trim().split(/\r?\n/);
-            if (rows.length > 1) {
-                const row = parseCSVLine(rows[1]); // आपके ही बनाये हुए सेफ पार्सर का इस्तेमाल
+            if (row.length > 4) {
+                const team1Name = row[0]?.replace(/"/g, '') || 'KAJIBIGHA XI';
+                const team2Name = row[1]?.replace(/"/g, '') || 'DANNY CLUB';
                 
-                if (row.length >= 5) {
-                    // .trim() लगाने से आगे-पीछे के फालतू स्पेस अपने आप हट जाएंगे
-                    const team1Name = (row[0] || 'KAJIBIGHA XI').trim();
-                    const team2Name = (row[1] || 'DANNY CLUB').trim();
-                    
-                    const currentMatch = team1Name + "_vs_" + team2Name;
-                    const savedMatch = localStorage.getItem("kpl_current_match");
-                    
-                    // यह भी चेक करें कि नाम खाली (Blank) तो नहीं आ रहा
-                    if (team1Name !== "" && team2Name !== "") {
-                        if (savedMatch !== currentMatch && savedMatch !== null) {
-                            // नया मैच शुरू होने पर ही अनलॉक होगा
-                            localStorage.removeItem("kpl_has_voted"); 
-                            if(typeof unlockUIVisuals === 'function') unlockUIVisuals();
-                            const msg = document.getElementById('poll-message');
-                            if (msg) {
-                                msg.innerText = "🔥 NEW MATCH DETECTED! CAST YOUR VOTE NOW!";
-                                msg.className = "text-center text-xs font-black text-cyan-400 tracking-widest uppercase animate-pulse";
-                            }
-                        }
-                        localStorage.setItem("kpl_current_match", currentMatch);
+                // 👇 नया कोड: चेक करें कि क्या टीम का नाम बदला है (नया मैच) 👇
+                const currentMatch = team1Name + "_vs_" + team2Name;
+                const savedMatch = localStorage.getItem("kpl_current_match");
+                
+                if (savedMatch !== currentMatch && savedMatch !== null) {
+                    // अगर टीम बदली है, तो पुराना वोट डिलीट कर दें और अनलॉक कर दें
+                    localStorage.removeItem("kpl_has_voted"); 
+                    if(typeof unlockUIVisuals === 'function') unlockUIVisuals();
+                    const msg = document.getElementById('poll-message');
+                    if (msg) {
+                        msg.innerText = "🔥 NEW MATCH DETECTED! CAST YOUR VOTE NOW!";
+                        msg.className = "text-center text-xs font-black text-cyan-400 tracking-widest uppercase animate-pulse";
                     }
-
-                    // UI को अपडेट करें
-                    document.getElementById('teamA-display').innerText = team1Name;
-                    document.getElementById('teamB-display').innerText = team2Name;
-                    document.getElementById('score-display').innerText = (row[2] || '0-0').trim();
-                    document.getElementById('overs-display').innerText = `(${(row[3] || '0').trim()} OV)`;
-                    document.getElementById('status-display').innerText = (row[4] || 'Live 🏏').trim();
-                    
-                    if(document.getElementById('poll-teamA')) document.getElementById('poll-teamA').innerText = team1Name;
-                    if(document.getElementById('poll-teamB')) document.getElementById('poll-teamB').innerText = team2Name;
                 }
-            }
-        // try {
-        //     const response = await fetch(liveLink);
-        //     const data = await response.text();
-        //     const row = data.split('\n')[1]?.split(',') || [];
-            
-        //     if (row.length > 4) {
-        //         const team1Name = row[0]?.replace(/"/g, '') || 'KAJIBIGHA XI';
-        //         const team2Name = row[1]?.replace(/"/g, '') || 'DANNY CLUB';
-                
-        //         // 👇 नया कोड: चेक करें कि क्या टीम का नाम बदला है (नया मैच) 👇
-        //         const currentMatch = team1Name + "_vs_" + team2Name;
-        //         const savedMatch = localStorage.getItem("kpl_current_match");
-                
-        //         if (savedMatch !== currentMatch && savedMatch !== null) {
-        //             // अगर टीम बदली है, तो पुराना वोट डिलीट कर दें और अनलॉक कर दें
-        //             localStorage.removeItem("kpl_has_voted"); 
-        //             if(typeof unlockUIVisuals === 'function') unlockUIVisuals();
-        //             const msg = document.getElementById('poll-message');
-        //             if (msg) {
-        //                 msg.innerText = "🔥 NEW MATCH DETECTED! CAST YOUR VOTE NOW!";
-        //                 msg.className = "text-center text-xs font-black text-cyan-400 tracking-widest uppercase animate-pulse";
-        //             }
-        //         }
-        //         localStorage.setItem("kpl_current_match", currentMatch); // मौजूदा मैच को सेव रखें
-        //         // 👆 यहाँ तक नया कोड है 👆
+                localStorage.setItem("kpl_current_match", currentMatch); // मौजूदा मैच को सेव रखें
+                // 👆 यहाँ तक नया कोड है 👆
 
-        //         document.getElementById('teamA-display').innerText = team1Name;
-        //         document.getElementById('teamB-display').innerText = team2Name;
-        //         document.getElementById('score-display').innerText = row[2]?.replace(/"/g, '') || '0-0';
-        //         document.getElementById('overs-display').innerText = `(${row[3]?.replace(/"/g, '') || '0'} OV)`;
-        //         document.getElementById('status-display').innerText = row[4]?.replace(/"/g, '') || 'Live 🏏';
+                document.getElementById('teamA-display').innerText = team1Name;
+                document.getElementById('teamB-display').innerText = team2Name;
+                document.getElementById('score-display').innerText = row[2]?.replace(/"/g, '') || '0-0';
+                document.getElementById('overs-display').innerText = `(${row[3]?.replace(/"/g, '') || '0'} OV)`;
+                document.getElementById('status-display').innerText = row[4]?.replace(/"/g, '') || 'Live 🏏';
                 
-        //         if(document.getElementById('poll-teamA')) document.getElementById('poll-teamA').innerText = team1Name;
-        //         if(document.getElementById('poll-teamB')) document.getElementById('poll-teamB').innerText = team2Name;
-        //     }
+                if(document.getElementById('poll-teamA')) document.getElementById('poll-teamA').innerText = team1Name;
+                if(document.getElementById('poll-teamB')) document.getElementById('poll-teamB').innerText = team2Name;
+            }
             
-        // } 
+        } 
              catch (e) {
             console.error("Live Score Update Failed:", e);
         }
