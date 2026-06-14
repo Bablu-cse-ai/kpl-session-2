@@ -406,7 +406,7 @@
             </div>
         </div>
 
- <div id="content-stats" class="tab-content  max-w-5xl mx-auto space-y-6">
+ <div id="content-stats" class="tab-content hidden max-w-5xl mx-auto space-y-6">
     <section class="glass-panel p-6 rounded-3xl border border-slate-800">
         <h2 class="sports-font text-2xl font-black text-amber-400 mb-6 uppercase">🏆 Player Performance</h2>
         <div class="overflow-x-auto">
@@ -416,6 +416,7 @@
                         <th class="p-4">Player</th>
                         <th class="p-4">Team</th>
                         <th class="p-4">Runs</th>
+                        <th class="p-4">Outs</th>
                         <th class="p-4">Balls</th>
                         <th class="p-4">AVG</th>
                         <th class="p-4">SR</th>
@@ -612,7 +613,9 @@
         const response = await fetch(statsLink);
         const data = await response.text();
 
-        const rows = data.trim().split('\n');
+        // const rows = data.trim().split('\n');
+        const rows = data.trim().split(/\r?\n/);
+        const row = rows[1].split(',').map(x=>x.trim());
 
         let html = "";
 
@@ -701,9 +704,9 @@
         updateKPL();
         updatePlayerStats();
         updateSquads();
-        setInterval(updateKPL, 2000); 
-        setInterval(updatePlayerStats, 2000);
-        setInterval( updateSquads, 4000);
+        setInterval(updateKPL, 1000); 
+        setInterval(updatePlayerStats, 1000);
+        setInterval( updateSquads, 3000);
     });
         
     </script>
