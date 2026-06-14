@@ -588,7 +588,7 @@
             for (let i = 1; i < rows.length; i++) {
                 if (!rows[i].trim()) continue;
                 const c = parseCSVLine(rows[i]);
-                if (c.length < 6) continue;
+                if (c.length < 8) continue;
                 
                 html += `<tr class="hover:bg-slate-900/30">
                     <td class="p-4 text-center font-bold text-amber-500">${c[0]}</td>
@@ -612,7 +612,7 @@ async function updatePlayerStats() {
     const tableBody = document.getElementById("stats-table-body");
     
     // लिंक जो आपने दिया है
-    const statsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQus9RUQRvOWEmtoATW_5C5CBfryV6ViDpSOXsVjM7oeEuurVWCPwgy0cv_RASwogE-ff1Zwr21e_TV/pub?gid=0&single=true&output=csv";
+    // const statsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQus9RUQRvOWEmtoATW_5C5CBfryV6ViDpSOXsVjM7oeEuurVWCPwgy0cv_RASwogE-ff1Zwr21e_TV/pub?gid=0&single=true&output=csv";
 
     try {
         const response = await fetch(statsLink);
@@ -624,7 +624,7 @@ async function updatePlayerStats() {
         let html = "";
         
         // i=1 से शुरू करें (ताकि हेडर वाली लाइन न आए)
-        for (let i = 1; i < rows.length; i++) {
+        for (let i = 0; i < rows.length; i++) {
             const cols = rows[i].split(',');
             if (cols.length < 5) continue; // अगर लाइन में डेटा अधूरा है तो छोड़ दें
 
