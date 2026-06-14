@@ -582,6 +582,58 @@
         } catch (e) { console.error("Points Table Update Failed:", e); }
     }
 
+        async function updatePlayerStats() {
+
+    try {
+
+        const response = await fetch(statsLink);
+        const data = await response.text();
+
+        const rows = data.trim().split(/\r?\n/);
+
+        let html = "";     // <-- Ye add karo
+
+        for(let i=1;i<rows.length;i++){
+
+            const c = rows[i].split(",");
+
+            if(c.length < 5) continue;
+
+            let player = c[0].trim();
+            let team   = c[1].trim();
+
+            let runs  = Number(c[2]) || 0;
+            let outs  = Number(c[3]) || 0;
+            let balls = Number(c[4]) || 0;
+
+            let avg = outs > 0 ? (runs/outs).toFixed(2) : runs.toFixed(2);
+
+            let sr = balls > 0 ? ((runs/balls)*100).toFixed(2) : "0.00";
+
+            html += `
+            <tr class="border-b border-slate-900 hover:bg-slate-900/50">
+                <td class="p-4 font-bold text-white">${player}</td>
+                <td class="p-4">${team}</td>
+                <td class="p-4">${runs}</td>
+                <td class="p-4">${outs}</td>
+                <td class="p-4">${balls}</td>
+                <td class="p-4 text-emerald-400">${avg}</td>
+                <td class="p-4 text-amber-400">${sr}</td>
+            </tr>`;
+        }
+
+        document.getElementById("stats-table-body").innerHTML = html;
+
+    }
+
+    catch(e){
+
+        console.error("Stats Load Failed:",e);
+
+    }
+
+}
+
     // 2. Player Stats अपडेट फंक्शन
     // async function updatePlayerStats() {
     //     try {
@@ -606,41 +658,41 @@
     //     } catch (e) { console.error("Stats Load Failed:", e); }
     // }
 
-    async function updatePlayerStats() {
+//     async function updatePlayerStats() {
 
-    try {
+//     try {
 
-        const response = await fetch(statsLink);
-        const data = await response.text();
-        const rows = data.trim().split(/\r?\n/);
+//         const response = await fetch(statsLink);
+//         const data = await response.text();
+//         const rows = data.trim().split(/\r?\n/);
 
-for(let i=1;i<rows.length;i++){
+// for(let i=1;i<rows.length;i++){
 
-    const c = rows[i].split(",");
+//     const c = rows[i].split(",");
 
-    if(c.length < 5) continue;
+//     if(c.length < 5) continue;
 
-    let player = c[0].trim();
-    let team   = c[1].trim();
+//     let player = c[0].trim();
+//     let team   = c[1].trim();
 
-    let runs  = Number(c[2]) || 0;
-    let outs  = Number(c[3]) || 0;
-    let balls = Number(c[4]) || 0;
+//     let runs  = Number(c[2]) || 0;
+//     let outs  = Number(c[3]) || 0;
+//     let balls = Number(c[4]) || 0;
 
-    let avg = outs > 0 ? (runs/outs).toFixed(2) : runs.toFixed(2);
-    let sr = balls > 0 ? ((runs/balls)*100).toFixed(2) : "0.00";
+//     let avg = outs > 0 ? (runs/outs).toFixed(2) : runs.toFixed(2);
+//     let sr = balls > 0 ? ((runs/balls)*100).toFixed(2) : "0.00";
 
-    html += `
-    <tr>
-      <td>${player}</td>
-      <td>${team}</td>
-      <td>${runs}</td>
-      <td>${outs}</td>
-      <td>${balls}</td>
-      <td>${avg}</td>
-      <td>${sr}</td>
-    </tr>`;
-}
+//     html += `
+//     <tr>
+//       <td>${player}</td>
+//       <td>${team}</td>
+//       <td>${runs}</td>
+//       <td>${outs}</td>
+//       <td>${balls}</td>
+//       <td>${avg}</td>
+//       <td>${sr}</td>
+//     </tr>`;
+// }
 
         // const rows = data.trim().split('\n');
 //         const rows = data.trim().split(/\r?\n/);
