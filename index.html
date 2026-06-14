@@ -621,47 +621,77 @@
 
         for(let i=1;i<rows.length;i++){
 
-            const c = rows[i].split(',').map(x=>x.trim());
+               const rows = data.trim().split(/\r?\n/);
 
-            if(c.length < 5) continue;
+for(let i=1;i<rows.length;i++){
 
-            let player = c[0];
-            let team   = c[1];
+    const c = rows[i].split(",");
 
-            let runs  = parseInt(c[2]) || 0;
-            let outs  = parseInt(c[3]) || 0;
-            let balls = parseInt(c[4]) || 0;
+    if(c.length < 7) continue;
 
-            // Average
-            let avg = outs > 0
-                ? (runs / outs).toFixed(2)
-                : runs.toFixed(2);
+    let player = c[0].trim();
+    let team   = c[1].trim();
 
-            // Strike Rate
-            let sr = balls > 0
-                ? ((runs / balls) * 100).toFixed(2)
-                : "0.00";
+    let runs  = Number(c[2]) || 0;
+    let outs  = Number(c[3]) || 0;
+    let balls = Number(c[4]) || 0;
 
-            html += `
-            <tr class="border-b border-slate-900 hover:bg-slate-900/50">
+    let avg = outs > 0 ? (runs/outs).toFixed(2) : runs.toFixed(2);
 
-                <td class="p-4 font-bold text-white">${player}</td>
+    let sr = balls > 0 ? ((runs/balls)*100).toFixed(2) : "0.00";
 
-                <td class="p-4 text-slate-400">${team}</td>
+    html += `
+    <tr>
+      <td>${player}</td>
+      <td>${team}</td>
+      <td>${runs}</td>
+      <td>${outs}</td>
+      <td>${balls}</td>
+      <td>${avg}</td>
+      <td>${sr}</td>
+    </tr>`;
+}
+        //     const c = rows[i].split(',').map(x=>x.trim());
 
-                <td class="p-4">${runs}</td>
+        //     if(c.length < 5) continue;
 
-                <td class="p-4">${outs}</td>
+        //     let player = c[0];
+        //     let team   = c[1];
 
-                <td class="p-4">${balls}</td>
+        //     let runs  = parseInt(c[2]) || 0;
+        //     let outs  = parseInt(c[3]) || 0;
+        //     let balls = parseInt(c[4]) || 0;
 
-                <td class="p-4 text-emerald-400 font-bold">${avg}</td>
+        //     // Average
+        //     let avg = outs > 0
+        //         ? (runs / outs).toFixed(2)
+        //         : runs.toFixed(2);
 
-                <td class="p-4 text-amber-400 font-bold">${sr}</td>
+        //     // Strike Rate
+        //     let sr = balls > 0
+        //         ? ((runs / balls) * 100).toFixed(2)
+        //         : "0.00";
 
-            </tr>
-            `;
-        }
+        //     html += `
+        //     <tr class="border-b border-slate-900 hover:bg-slate-900/50">
+
+        //         <td class="p-4 font-bold text-white">${player}</td>
+
+        //         <td class="p-4 text-slate-400">${team}</td>
+
+        //         <td class="p-4">${runs}</td>
+
+        //         <td class="p-4">${outs}</td>
+
+        //         <td class="p-4">${balls}</td>
+
+        //         <td class="p-4 text-emerald-400 font-bold">${avg}</td>
+
+        //         <td class="p-4 text-amber-400 font-bold">${sr}</td>
+
+        //     </tr>
+        //     `;
+        // }
 
         document.getElementById("stats-table-body").innerHTML = html;
 
