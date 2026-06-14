@@ -604,57 +604,113 @@
         }
     }
 
-    // Fixed Player Stats Function
-    async function updatePlayerStats() {
-        try {
-            const response = await fetch(statsLink);
-            if (!response.ok) throw new Error('Failed to fetch stats');
+        // अपनी पुरानी JavaScript की जगह यह वाला अपडेटेड फंक्शन रखें
+async function updatePlayerStats() {
+    const tableBody = document.getElementById("stats-table-body");
+    
+    // लिंक जो आपने दिया है
+    const statsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQus9RUQRvOWEmtoATW_5C5CBfryV6ViDpSOXsVjM7oeEuurVWCPwgy0cv_RASwogE-ff1Zwr21e_TV/pub?gid=0&single=true&output=csv";
 
-            const data = await response.text();
-            const rows = data.trim().split(/\r?\n/);
-            
-            let html = "";
+    try {
+        const response = await fetch(statsLink);
+        const data = await response.text();
+        
+        // डेटा को पंक्तियों में तोड़ें
+        const rows = data.trim().split(/\r?\n/);
+        
+        let html = "";
+        
+        // i=1 से शुरू करें (ताकि हेडर वाली लाइन न आए)
+        for (let i = 1; i < rows.length; i++) {
+            const cols = rows[i].split(',');
+            if (cols.length < 5) continue; // अगर लाइन में डेटा अधूरा है तो छोड़ दें
 
-            for (let i = 1; i < rows.length; i++) {
-                if (!rows[i].trim()) continue;
-                
-                const cols = parseCSVLine(rows[i]);
-                if (cols.length < 5) continue;
+            const player = cols[0].trim();
+            const team = cols[1].trim();
+            const runs = parseFloat(cols[2]) || 0;
+            const outs = parseFloat(cols[3]) || 0;
+            const balls = parseFloat(cols[4]) || 0;
 
-                const player = cols[0];
-                const team   = cols[1];
-                const runs   = parseFloat(cols[2]) || 0;
-                const outs   = parseFloat(cols[3]) || 0;
-                const balls  = parseFloat(cols[4]) || 0;
+            // कैलकुलेशन: अगर outs 0 है, तो औसत runs ही रहेगा (Not Out केस)
+            const avg = outs > 0 ? (runs / outs).toFixed(1) : runs.toFixed(1);
+            const sr = balls > 0 ? ((runs / balls) * 100).toFixed(1) : "0.0";
 
-                const avg = outs > 0 ? (runs / outs).toFixed(1) : (runs ? runs.toFixed(1) : "-");
-                const sr  = balls > 0 ? ((runs / balls) * 100).toFixed(1) : "-";
-
-                html += `
-                <tr class="border-b border-slate-900 hover:bg-slate-900/50 transition-colors">
-                    <td class="p-4 font-bold text-white">${player}</td>
-                    <td class="p-4 text-slate-400 text-xs">${team}</td>
-                    <td class="p-4 font-mono text-amber-300">${runs}</td>
-                    <td class="p-4 font-mono">${outs}</td>
-                    <td class="p-4 font-mono">${balls}</td>
-                    <td class="p-4 font-mono text-emerald-400 font-bold">${avg}</td>
-                    <td class="p-4 font-mono text-amber-400 font-bold">${sr}</td>
-                </tr>`;
-            }
-
-            const tbody = document.getElementById("stats-table-body");
-            if (tbody) {
-                tbody.innerHTML = html || `<tr><td colspan="7" class="p-8 text-center text-slate-400">अभी कोई खिलाड़ी का डेटा उपलब्ध नहीं है</td></tr>`;
-            }
-
-        } catch (e) {
-            console.error("Stats Load Failed:", e);
-            const tbody = document.getElementById("stats-table-body");
-            if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-red-400">डेटा लोड करने में समस्या। पेज रिफ्रेश करें।</td></tr>`;
-            }
+            html += `
+            <tr class="border-b border-slate-800 hover:bg-slate-900/50">
+                <td class="p-4 font-bold text-white">${player}</td>
+                <td class="p-4 text-slate-400">${team}</td>
+                <td class="p-4 font-mono">${runs}</td>
+                <td class="p-4 font-mono">${outs}</td>
+                <td class="p-4 font-mono">${balls}</td>
+                <td class="p-4 font-mono text-emerald-400 font-bold">${avg}</td>
+                <td class="p-4 font-mono text-amber-400 font-bold">${sr}</td>
+            </tr>`;
         }
+        
+        tableBody.innerHTML = html;
+        
+    } catch (e) {
+        console.error("Stats Error:", e);
+        tableBody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-red-500">❌ डेटा लोड नहीं हो पाया</td></tr>`;
     }
+}
+
+// पेज लोड होते ही और हर 2 सेकंड में अपडेट करें
+document.addEventListener("DOMContentLoaded", () => {
+    updatePlayerStats();
+    setInterval(updatePlayerStats, 2000);
+});
+    // Fixed Player Stats Function
+    // async function updatePlayerStats() {
+    //     try {
+    //         const response = await fetch(statsLink);
+    //         if (!response.ok) throw new Error('Failed to fetch stats');
+
+    //         const data = await response.text();
+    //         const rows = data.trim().split(/\r?\n/);
+            
+    //         let html = "";
+
+    //         for (let i = 1; i < rows.length; i++) {
+    //             if (!rows[i].trim()) continue;
+                
+    //             const cols = parseCSVLine(rows[i]);
+    //             if (cols.length < 5) continue;
+
+    //             const player = cols[0];
+    //             const team   = cols[1];
+    //             const runs   = parseFloat(cols[2]) || 0;
+    //             const outs   = parseFloat(cols[3]) || 0;
+    //             const balls  = parseFloat(cols[4]) || 0;
+
+    //             const avg = outs > 0 ? (runs / outs).toFixed(1) : (runs ? runs.toFixed(1) : "-");
+    //             const sr  = balls > 0 ? ((runs / balls) * 100).toFixed(1) : "-";
+
+    //             html += `
+    //             <tr class="border-b border-slate-900 hover:bg-slate-900/50 transition-colors">
+    //                 <td class="p-4 font-bold text-white">${player}</td>
+    //                 <td class="p-4 text-slate-400 text-xs">${team}</td>
+    //                 <td class="p-4 font-mono text-amber-300">${runs}</td>
+    //                 <td class="p-4 font-mono">${outs}</td>
+    //                 <td class="p-4 font-mono">${balls}</td>
+    //                 <td class="p-4 font-mono text-emerald-400 font-bold">${avg}</td>
+    //                 <td class="p-4 font-mono text-amber-400 font-bold">${sr}</td>
+    //             </tr>`;
+    //         }
+
+    //         const tbody = document.getElementById("stats-table-body");
+    //         if (tbody) {
+    //             tbody.innerHTML = html || `<tr><td colspan="7" class="p-8 text-center text-slate-400">अभी कोई खिलाड़ी का डेटा उपलब्ध नहीं है</td></tr>`;
+    //         }
+
+    //     } catch (e) {
+    //         console.error("Stats Load Failed:", e);
+    //         const tbody = document.getElementById("stats-table-body");
+    //         if (tbody) {
+    //             tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-red-400">डेटा लोड करने में समस्या। पेज रिफ्रेश करें।</td></tr>`;
+    //         }
+    //     }
+    // }
 
     // Squads Update
     async function updateSquads() {
@@ -695,12 +751,12 @@
     // Initialize everything
     document.addEventListener("DOMContentLoaded", () => {
         updateKPL();
-        updatePlayerStats();
+        // updatePlayerStats();
         updateSquads();
 
         // Auto refresh
         setInterval(updateKPL, 8000);        // Live score every 8 seconds
-        setInterval(updatePlayerStats, 15000); // Stats every 15 seconds
+        // setInterval(updatePlayerStats, 15000); // Stats every 15 seconds
         setInterval(updateSquads, 25000);      // Squads every 25 seconds
     });
 </script>
