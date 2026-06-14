@@ -108,7 +108,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-6 bg-slate-950/90 p-6 rounded-2xl border border-slate-800/60 relative">
                             <div class="text-center md:text-left space-y-1">
                                 <span class="bg-amber-500/10 text-amber-400 font-bold text-[10px] px-2.5 py-0.5 rounded-md border border-amber-500/20 sports-font uppercase tracking-wider">TEAM 01</span>
-                                <p id="teamA-display" class="text-2xl font-black text-white tracking-wide uppercase drop-shadow">KAJIBIGHA XI</p>
+                                <p id="teamA-display" class="text-2xl font-black text-white tracking-wide uppercase drop-shadow">LOADING....</p>
                                 <p class="text-xs text-amber-500 font-medium flex items-center justify-center md:justify-start gap-1">
                                     <i class="fa-solid fa-circle-nodes text-[9px]"></i> Opted to Bowl First 🥎
                                 </p>
@@ -417,7 +417,7 @@
                         <div class="flex justify-between items-center mb-3">
                             <div>
                                 <p class="text-[10px] text-amber-500 font-bold sports-font uppercase tracking-wider">TEAM ONE</p>
-                                <h4 class="text-lg font-black text-white group-hover:text-amber-400 transition-colors">KAJIBIGHA XI</h4>
+                                <h4 id="poll-teamA" class="text-lg font-black text-white group-hover:text-amber-400 transition-colors">LOADING....</h4>
                             </div>
                             <span id="voteA-pct" class="sports-font text-2xl font-black text-amber-400 bg-amber-500/5 px-3 py-1 rounded-xl border border-amber-500/10">60%</span>
                         </div>
@@ -431,7 +431,7 @@
                         <div class="flex justify-between items-center mb-3">
                             <div>
                                 <p class="text-[10px] text-red-500 font-bold sports-font uppercase tracking-wider">TEAM TWO</p>
-                                <h4 class="text-lg font-black text-slate-200 group-hover:text-red-400 transition-colors">DANNY CLUB</h4>
+                                <h4 id="poll-teamB" class="text-lg font-black text-slate-200 group-hover:text-red-400 transition-colors">LOADING....</h4>
                             </div>
                             <span id="voteB-pct" class="sports-font text-2xl font-black text-red-500 bg-red-500/5 px-3 py-1 rounded-xl border border-red-500/10">40%</span>
                         </div>
@@ -592,6 +592,8 @@
                 document.getElementById('score-display').innerText = row[2]?.replace(/"/g, '') || '0-0';
                 document.getElementById('overs-display').innerText = `(${row[3]?.replace(/"/g, '') || '0'} OV)`;
                 document.getElementById('status-display').innerText = row[4]?.replace(/"/g, '') || 'Live 🏏';
+                if(document.getElementById('poll-teamA')) document.getElementById('poll-teamA').innerText = row[0]?.replace(/"/g, '') || 'KAJIBIGHA XI';
+                if(document.getElementById('poll-teamB')) document.getElementById('poll-teamB').innerText = row[1]?.replace(/"/g, '') || 'DANNY CLUB';
             }
         } catch (e) {
             console.error("Live Score Update Failed:", e);
