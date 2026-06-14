@@ -82,8 +82,7 @@
         <div class="bg-slate-950/90 p-2 rounded-2xl border border-slate-900 grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs md:text-sm font-bold sports-font">
             <button onclick="switchTab('live')" id="tab-live" class="py-3 px-2 rounded-xl transition cursor-pointer bg-red-600 text-white shadow-lg"><i class="fa-solid fa-satellite-dish mr-1 live-dot"></i> MATCH CENTER</button>
             <button onclick="switchTab('stats')" id="tab-stats" class="py-3 px-2 rounded-xl transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900">
-    <i class="fa-solid fa-chart-line mr-1"></i> PLAYER STATS
-</button>
+    <i class="fa-solid fa-chart-line mr-1"></i> PLAYER STATS</button>
             <button onclick="switchTab('table')" id="tab-table" class="py-3 px-2 rounded-xl transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900"><i class="fa-solid fa-table-list mr-1"></i> POINTS TABLE</button>
             <button onclick="switchTab('rules')" id="tab-rules" class="py-3 px-2 rounded-xl transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900"><i class="fa-solid fa-gavel mr-1"></i> FULL RULES</button>
             <button onclick="switchTab('teams')" id="tab-teams" class="py-3 px-2 rounded-xl transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900"><i class="fa-solid fa-users mr-1"></i> SQUADS & CAPS</button>
@@ -447,6 +446,266 @@
     </footer>
 
     <script>
+    // Tab Switcher Controller
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('nav button').forEach(btn => {
+            btn.classList.remove('bg-red-600', 'text-white', 'shadow-lg');
+            btn.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-slate-900');
+        });
+
+        document.getElementById(`content-${tabId}`).classList.remove('hidden');
+        const activeBtn = document.getElementById(`tab-${tabId}`);
+        if (activeBtn) {
+            activeBtn.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-slate-900');
+            activeBtn.classList.add('bg-red-600', 'text-white', 'shadow-lg');
+        }
+    }
+
+    // Voting System
+    let countA = 744;
+    let countB = 496;
+    let totalVotes = countA + countB;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const totalDisplay = document.getElementById('total-votes-display');
+        if (totalDisplay) totalDisplay.innerText = totalVotes.toLocaleString();
+
+        if (localStorage.getItem("kpl_has_voted")) {
+            applyLockedUIVisuals();
+            const msg = document.getElementById('poll-message');
+            if (msg) {
+                msg.innerText = "🔒 YOUR VALUED MATCH PREDICTION HAS BEEN LOCKED!";
+                msg.className = "text-center text-xs font-black text-amber-500 tracking-widest uppercase animate-pulse";
+            }
+        }
+    });
+
+    function applyLockedUIVisuals() {
+        const cardA = document.getElementById('card-voteA');
+        const cardB = document.getElementById('card-voteB');
+        const txtA = document.getElementById('voteA-status-txt');
+        const txtB = document.getElementById('voteB-status-txt');
+
+        if (cardA && cardB) {
+            cardA.classList.remove('cursor-pointer', 'hover:border-amber-500/50', 'hover:bg-slate-900');
+            cardB.classList.remove('cursor-pointer', 'hover:border-red-500/50', 'hover:bg-slate-900');
+            cardA.style.pointerEvents = "none";
+            cardB.style.pointerEvents = "none";
+        }
+        if (txtA && txtB) {
+            txtA.innerText = "✓ SELECTION SUBMITTED";
+            txtB.innerText = "✓ SELECTION SUBMITTED";
+            txtA.className = "text-right text-[10px] text-emerald-500 font-mono font-bold uppercase tracking-wider";
+            txtB.className = "text-right text-[10px] text-emerald-500 font-mono font-bold uppercase tracking-wider";
+        }
+    }
+
+    function castVote(team) {
+        if (localStorage.getItem("kpl_has_voted")) return;
+
+        if (team === 'A') countA += 12;
+        else countB += 12;
+
+        totalVotes = countA + countB;
+        let pctA = Math.round((countA / totalVotes) * 100);
+        let pctB = 100 - pctA;
+
+        document.getElementById('voteA-pct').innerText = pctA + '%';
+        document.getElementById('voteB-pct').innerText = pctB + '%';
+        document.getElementById('voteA-bar').style.width = pctA + '%';
+        document.getElementById('voteB-bar').style.width = pctB + '%';
+        document.getElementById('total-votes-display').innerText = totalVotes.toLocaleString();
+
+        localStorage.setItem("kpl_has_voted", "true");
+        applyLockedUIVisuals();
+
+        const msgElement = document.getElementById('poll-message');
+        if (msgElement) {
+            msgElement.innerText = "SUCCESSFULLY RECORDED! 🎉 THANKS FOR PLAYING.";
+            msgElement.className = "text-center text-xs font-black text-emerald-400 tracking-wider uppercase animate-bounce";
+        }
+
+        confetti({ particleCount: 70, spread: 80, origin: { y: 0.8 } });
+    }
+
+    function celebrateWin() {
+        confetti({ particleCount: 140, spread: 80, scalar: 1.2 });
+    }
+
+    // Google Sheet Links
+    const liveLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQJ4-tJtoJW_Wq0q6z5icTbLwS-P2FVCYz2CZF9szK7TyWGSxId3VTGFb9EuKhO6bjRIvUjbZVh6qTp/pub?gid=0&single=true&output=csv";
+    const pointsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS8Dyo1jcXL1sXfFoQZV5DLsQBs7lr6WvGlYa2Sbi0a8uZhbBj10kNtaJe_95x7a3EKettBQMyzjXxI/pub?gid=0&single=true&output=csv";
+    const squadsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSv46xMBH9vqs9EgMemrhemOgEZOd76IeROPkd2GkU7Z3QY28tigHOlm21MbeR-n53UlAPF0taeEG-B/pub?gid=0&single=true&output=csv";
+    const statsLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQus9RUQRvOWEmtoATW_5C5CBfryV6ViDpSOXsVjM7oeEuurVWCPwgy0cv_RASwogE-ff1Zwr21e_TV/pub?gid=0&single=true&output=csv";
+
+    // Improved CSV Parser
+    function parseCSVLine(line) {
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+        
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            if (char === '"') {
+                inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+                result.push(current.trim());
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        result.push(current.trim());
+        return result;
+    }
+
+    // Live Score + Points Table
+    async function updateKPL() {
+        try {
+            const response = await fetch(liveLink);
+            const data = await response.text();
+            const row = data.split('\n')[1]?.split(',') || [];
+            
+            if (row.length > 4) {
+                document.getElementById('teamA-display').innerText = row[0]?.replace(/"/g, '') || 'KAJIBIGHA XI';
+                document.getElementById('teamB-display').innerText = row[1]?.replace(/"/g, '') || 'DANNY CLUB';
+                document.getElementById('score-display').innerText = row[2]?.replace(/"/g, '') || '0-0';
+                document.getElementById('overs-display').innerText = `(${row[3]?.replace(/"/g, '') || '0'} OV)`;
+                document.getElementById('status-display').innerText = row[4]?.replace(/"/g, '') || 'Live 🏏';
+            }
+        } catch (e) {
+            console.error("Live Score Update Failed:", e);
+        }
+
+        // Points Table
+        try {
+            const resTable = await fetch(pointsLink);
+            const dataTable = await resTable.text();
+            const rows = dataTable.split('\n');
+            let html = "";
+            for (let i = 1; i < rows.length; i++) {
+                if (!rows[i].trim()) continue;
+                const c = parseCSVLine(rows[i]);
+                if (c.length < 6) continue;
+                
+                html += `<tr class="hover:bg-slate-900/30">
+                    <td class="p-4 text-center font-bold text-amber-500">${c[0]}</td>
+                    <td class="p-4 font-black text-white">${c[1]}</td>
+                    <td class="p-4 text-center font-mono">${c[2]}</td>
+                    <td class="p-4 text-center font-mono text-emerald-400">${c[3]}</td>
+                    <td class="p-4 text-center font-mono text-red-400">${c[4]}</td>
+                    <td class="p-4 text-center font-black text-amber-400">${c[5]}</td>
+                </tr>`;
+            }
+            document.getElementById('points-table-body').innerHTML = html || '<tr><td colspan="7" class="p-8 text-center text-slate-400">No data available</td></tr>';
+        } catch (e) {
+            console.error("Points Table Update Failed:", e);
+        }
+    }
+
+    // Fixed Player Stats Function
+    async function updatePlayerStats() {
+        try {
+            const response = await fetch(statsLink);
+            if (!response.ok) throw new Error('Failed to fetch stats');
+
+            const data = await response.text();
+            const rows = data.trim().split(/\r?\n/);
+            
+            let html = "";
+
+            for (let i = 1; i < rows.length; i++) {
+                if (!rows[i].trim()) continue;
+                
+                const cols = parseCSVLine(rows[i]);
+                if (cols.length < 5) continue;
+
+                const player = cols[0];
+                const team   = cols[1];
+                const runs   = parseFloat(cols[2]) || 0;
+                const outs   = parseFloat(cols[3]) || 0;
+                const balls  = parseFloat(cols[4]) || 0;
+
+                const avg = outs > 0 ? (runs / outs).toFixed(1) : (runs ? runs.toFixed(1) : "-");
+                const sr  = balls > 0 ? ((runs / balls) * 100).toFixed(1) : "-";
+
+                html += `
+                <tr class="border-b border-slate-900 hover:bg-slate-900/50 transition-colors">
+                    <td class="p-4 font-bold text-white">${player}</td>
+                    <td class="p-4 text-slate-400 text-xs">${team}</td>
+                    <td class="p-4 font-mono text-amber-300">${runs}</td>
+                    <td class="p-4 font-mono">${outs}</td>
+                    <td class="p-4 font-mono">${balls}</td>
+                    <td class="p-4 font-mono text-emerald-400 font-bold">${avg}</td>
+                    <td class="p-4 font-mono text-amber-400 font-bold">${sr}</td>
+                </tr>`;
+            }
+
+            const tbody = document.getElementById("stats-table-body");
+            if (tbody) {
+                tbody.innerHTML = html || `<tr><td colspan="7" class="p-8 text-center text-slate-400">अभी कोई खिलाड़ी का डेटा उपलब्ध नहीं है</td></tr>`;
+            }
+
+        } catch (e) {
+            console.error("Stats Load Failed:", e);
+            const tbody = document.getElementById("stats-table-body");
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-red-400">डेटा लोड करने में समस्या। पेज रिफ्रेश करें।</td></tr>`;
+            }
+        }
+    }
+
+    // Squads Update
+    async function updateSquads() {
+        try {
+            const resSquad = await fetch(squadsLink);
+            const dataSquad = await resSquad.text();
+            const rows = dataSquad.trim().split(/\r?\n/);
+            let teams = {};
+
+            for (let i = 1; i < rows.length; i++) {
+                if (!rows[i].trim()) continue;
+                const c = parseCSVLine(rows[i]);
+                if (c.length >= 2 && c[0]) {
+                    if (!teams[c[0]]) teams[c[0]] = [];
+                    teams[c[0]].push(c[1]);
+                }
+            }
+
+            let html = "";
+            for (let teamName in teams) {
+                html += `<div class="glass-panel p-6 rounded-3xl border border-slate-800">
+                    <h3 class="sports-font text-xl font-black text-amber-400 mb-4">${teamName}</h3>
+                    <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">`;
+                
+                teams[teamName].forEach(p => {
+                    html += `<div class="p-2.5 bg-slate-950/50 rounded-xl">${p}</div>`;
+                });
+                
+                html += `</div></div>`;
+            }
+
+            document.getElementById('teams-container').innerHTML = html || '<p class="text-slate-400 text-center py-8">Squad data coming soon...</p>';
+        } catch (e) {
+            console.error("Squads Update Failed:", e);
+        }
+    }
+
+    // Initialize everything
+    document.addEventListener("DOMContentLoaded", () => {
+        updateKPL();
+        updatePlayerStats();
+        updateSquads();
+
+        // Auto refresh
+        setInterval(updateKPL, 8000);        // Live score every 8 seconds
+        setInterval(updatePlayerStats, 15000); // Stats every 15 seconds
+        setInterval(updateSquads, 25000);      // Squads every 25 seconds
+    });
+</script>
+    
+    <!-- <script>
         // Tab Switcher Controller
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -661,6 +920,6 @@
         setInterval( updateSquads, 3000);
     });
         
-    </script>
+    </script> -->
 </body>
 </html>
