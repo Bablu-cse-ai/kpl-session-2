@@ -239,8 +239,8 @@
                         <p class="text-xs text-slate-400 mt-0.5">लीग स्टेज की लाइव रैंकिंग और क्वालिफिकेशन स्टेटस</p>
                     </div>
                     <div class="flex flex-wrap gap-2 text-[10px] font-bold">
-                        <span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-md uppercase tracking-wider">👉 Top 2 Semi-Finals Me Jayenge</span>
-                        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-md uppercase tracking-wider">👉 Top 2 Direct Finals Me</span>
+                        <span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-md uppercase tracking-wider">👉  Semi-Finals</span>
+                        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-md uppercase tracking-wider">👉 Finals </span>
                     </div>
                 </div>
 
@@ -254,7 +254,8 @@
                                 <th class="p-4 text-center text-emerald-400">WINS (W)</th>
                                 <th class="p-4 text-center text-red-400">LOSSES (L)</th>
                                 <th class="p-4 text-center text-amber-400 font-black">POINTS (PTS)</th>
-                                <th class="p-4 text-center">QUALIFICATION STATUS</th>
+                                <th class="p-4 text-center">QUALIFICATION STATUS SEMI-FINAL</th>
+                                <th class="p-4 text-center">QUALIFICATION STATUS FINAL</th>
                             </tr>
                         </thead>
                         <tbody id="points-table-body" class="text-xs md:text-sm divide-y divide-slate-900 font-medium">
@@ -597,6 +598,7 @@
                     <td class="p-4 text-center font-mono text-red-400">${c[4]}</td>
                     <td class="p-4 text-center font-black text-amber-400">${c[5]}</td>
                     <td class="p-4 text-center font-black text-amber-400">${c[6]}</td>
+                    <td class="p-4 text-center font-black text-amber-400">${c[7]}</td>
                 </tr>`;
             }
             document.getElementById('points-table-body').innerHTML = html || '<tr><td colspan="7" class="p-8 text-center text-slate-400">No data available</td></tr>';
