@@ -612,22 +612,13 @@
 
         const response = await fetch(statsLink);
         const data = await response.text();
-
-        // const rows = data.trim().split('\n');
         const rows = data.trim().split(/\r?\n/);
-        const row = rows[1].split(',').map(x=>x.trim());
-
-        let html = "";
-
-        for(let i=1;i<rows.length;i++){
-
-               const rows = data.trim().split(/\r?\n/);
 
 for(let i=1;i<rows.length;i++){
 
     const c = rows[i].split(",");
 
-    if(c.length < 7) continue;
+    if(c.length < 5) continue;
 
     let player = c[0].trim();
     let team   = c[1].trim();
@@ -637,7 +628,6 @@ for(let i=1;i<rows.length;i++){
     let balls = Number(c[4]) || 0;
 
     let avg = outs > 0 ? (runs/outs).toFixed(2) : runs.toFixed(2);
-
     let sr = balls > 0 ? ((runs/balls)*100).toFixed(2) : "0.00";
 
     html += `
@@ -651,6 +641,45 @@ for(let i=1;i<rows.length;i++){
       <td>${sr}</td>
     </tr>`;
 }
+
+        // const rows = data.trim().split('\n');
+//         const rows = data.trim().split(/\r?\n/);
+//         const row = rows[1].split(',').map(x=>x.trim());
+
+//         let html = "";
+
+//         for(let i=1;i<rows.length;i++){
+
+//                const rows = data.trim().split(/\r?\n/);
+
+// for(let i=1;i<rows.length;i++){
+
+//     const c = rows[i].split(",");
+
+//     if(c.length < 7) continue;
+
+//     let player = c[0].trim();
+//     let team   = c[1].trim();
+
+//     let runs  = Number(c[2]) || 0;
+//     let outs  = Number(c[3]) || 0;
+//     let balls = Number(c[4]) || 0;
+
+//     let avg = outs > 0 ? (runs/outs).toFixed(2) : runs.toFixed(2);
+
+//     let sr = balls > 0 ? ((runs/balls)*100).toFixed(2) : "0.00";
+
+//     html += `
+//     <tr>
+//       <td>${player}</td>
+//       <td>${team}</td>
+//       <td>${runs}</td>
+//       <td>${outs}</td>
+//       <td>${balls}</td>
+//       <td>${avg}</td>
+//       <td>${sr}</td>
+//     </tr>`;
+// }
         //     const c = rows[i].split(',').map(x=>x.trim());
 
         //     if(c.length < 5) continue;
